@@ -1,0 +1,117 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["message"],
+  "properties": {
+    "message": {
+      "type": "string",
+      "description": "The educational response text to display to the learner"
+    },
+    "signal": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "learning_checkpoint",
+            "topic_completed",
+            "assessment_question",
+            "encouragement",
+            "difficulty_adjustment",
+            "observation_prompt",
+            "reflection_moment",
+            "practice_exercise",
+            "knowledge_unlocked"
+          ],
+          "description": "Type of educational signal"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "activity_type": {
+              "type": "string",
+              "description": "Type of learning activity",
+              "enum": [
+                "coding_exercise",
+                "visualization",
+                "quiz",
+                "experiment",
+                "debugging",
+                "implementation",
+                "analysis"
+              ]
+            },
+            "topic_name": {
+              "type": "string",
+              "description": "Name of the ML topic being covered"
+            },
+            "difficulty_level": {
+              "type": "string",
+              "enum": ["beginner", "intermediate", "advanced"],
+              "description": "Current difficulty level"
+            },
+            "concept_name": {
+              "type": "string",
+              "description": "Specific ML concept being taught"
+            },
+            "learning_objective": {
+              "type": "string",
+              "description": "What the learner should understand after this interaction"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Suggested next learning steps"
+            },
+            "code_snippet": {
+              "type": "string",
+              "description": "Python code example or exercise"
+            },
+            "assessment_criteria": {
+              "type": "string",
+              "description": "How to evaluate understanding"
+            },
+            "encouragement_type": {
+              "type": "string",
+              "enum": [
+                "milestone_celebration",
+                "progress_acknowledgment",
+                "effort_recognition",
+                "breakthrough_moment",
+                "persistence_praise"
+              ],
+              "description": "Type of encouragement"
+            },
+            "ml_element": {
+              "type": "string",
+              "description": "Specific ML component or technique involved"
+            },
+            "practical_application": {
+              "type": "string",
+              "description": "Real-world use case or application"
+            },
+            "common_mistake": {
+              "type": "string",
+              "description": "Common mistake to avoid"
+            },
+            "visualization_type": {
+              "type": "string",
+              "enum": [
+                "loss_curve",
+                "decision_boundary",
+                "confusion_matrix",
+                "network_architecture",
+                "feature_space",
+                "gradient_flow"
+              ],
+              "description": "Type of visualization to show"
+            }
+          }
+        }
+      }
+    }
+  }
+}
