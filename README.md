@@ -1,6 +1,6 @@
 # ML Education Game with Local LLM
 
-An interactive educational game that teaches machine learning fundamentals using a local LLM (Gemma 3n) via Ollama. This is a Pygame recreation of the original Godot game, focused on ML education instead of agriculture.
+An interactive educational game that teaches machine learning fundamentals using a local LLM (Gemma 3n) via Ollama.
 
 ## Features
 
