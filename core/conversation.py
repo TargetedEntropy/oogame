@@ -179,14 +179,24 @@ class Conversation:
             model = game_data.get_model_name()
             response_parts = []
 
-            for chunk in self.ollama_service.chat(
-                model=model,
-                messages=self.state.messages,
-                stream=True
-            ):
-                response_parts.append(chunk)
+            # Use async generator or run in executor to prevent blocking
+            import asyncio
+            import concurrent.futures
 
-            full_response = ''.join(response_parts)
+            def get_full_response():
+                parts = []
+                for chunk in self.ollama_service.chat(
+                    model=model,
+                    messages=self.state.messages,
+                    stream=True
+                ):
+                    parts.append(chunk)
+                return ''.join(parts)
+
+            # Run the blocking operation in a thread pool
+            loop = asyncio.get_event_loop()
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                full_response = await loop.run_in_executor(executor, get_full_response)
 
             # Process response for signals
             processed = self.process_response(full_response)

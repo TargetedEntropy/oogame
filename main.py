@@ -184,6 +184,10 @@ class MLEducationGame:
                     # Switch subjects
                     self.switch_subject()
 
+                elif event.key == pygame.K_SPACE and not self.is_conversing:
+                    # Start conversation from menu
+                    self.start_conversation()
+
             # Pass event to UI if conversing
             if self.is_conversing:
                 user_input = self.ui.handle_event(event)
@@ -295,16 +299,6 @@ Controls:
             dt = self.clock.tick(self.fps) / 1000.0
 
             self.handle_events()
-
-            # Handle menu input
-            if not self.is_conversing:
-                keys = pygame.key.get_pressed()
-                if keys[pygame.K_SPACE]:
-                    self.start_conversation()
-                elif keys[pygame.K_s]:
-                    # TODO: Add settings screen
-                    pass
-
             self.update(dt)
             self.draw()
 
