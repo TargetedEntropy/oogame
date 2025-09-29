@@ -48,11 +48,11 @@ class MLEducationGame:
         # Register signal handlers
         self._register_signal_handlers()
 
+        # Check Ollama status before creating menu
+        self.ollama_status = self._check_ollama_status()
+
         # Create main menu with pygame-menu
         self._create_menu()
-
-        # Check Ollama status
-        self.ollama_status = self._check_ollama_status()
 
     def _create_menu(self):
         """Create the main menu using pygame-menu."""
