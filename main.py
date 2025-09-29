@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 import pygame
+import pygame_gui
+import pygame_menu
 import asyncio
 import sys
 import json
 from pathlib import Path
+from typing import Optional
+
 from core.game_data import game_data, MLSubject
 from core.educational_conversation import EducationalConversation
 from core.conversation import SignalType
@@ -39,9 +43,267 @@ class MLEducationGame:
         # State
         self.is_conversing = False
         self.awaiting_response = False
+        self.show_menu = True
 
         # Register signal handlers
         self._register_signal_handlers()
+
+        # Create main menu with pygame-menu
+        self._create_menu()
+
+        # Check Ollama status
+        self.ollama_status = self._check_ollama_status()
+
+    def _create_menu(self):
+        """Create the main menu using pygame-menu."""
+        # Custom theme based on our color scheme
+        custom_theme = pygame_menu.themes.THEME_DARK.copy()
+        custom_theme.background_color = (30, 30, 40)
+        custom_theme.title_background_color = (45, 45, 60)
+        custom_theme.widget_selection_color = (100, 150, 250)
+        custom_theme.widget_font_color = (220, 220, 230)
+        custom_theme.widget_font_size = 24
+        custom_theme.title_font_size = 36
+
+        # Create main menu
+        self.menu = pygame_menu.Menu(
+            title='ML Education with Local LLM',
+            width=self.width,
+            height=self.height,
+            theme=custom_theme
+        )
+
+        # Add menu items
+        self.menu.add.label(f'Current Topic: {game_data.get_subject_name()}',
+                           font_size=20,
+                           font_color=(180, 180, 200))
+        self.menu.add.vertical_margin(30)
+
+        # Subject selector
+        subjects = [(subject.name.replace('_', ' ').title(), subject)
+                   for subject in MLSubject]
+        self.subject_selector = self.menu.add.selector(
+            'Select Topic: ',
+            subjects,
+            default=int(game_data.educational_subject),
+            onchange=self._on_subject_change
+        )
+
+        self.menu.add.vertical_margin(20)
+
+        # Player name input
+        self.menu.add.text_input(
+            'Your Name: ',
+            default=game_data.player_name,
+            onchange=self._on_name_change,
+            maxchar=20
+        )
+
+        # Pronoun selector
+        pronouns = [
+            ('they/them', 'they/them'),
+            ('she/her', 'she/her'),
+            ('he/him', 'he/him')
+        ]
+        pronoun_index = next((i for i, (_, v) in enumerate(pronouns)
+                             if v == game_data.player_pronouns), 0)
+        self.menu.add.selector(
+            'Pronouns: ',
+            pronouns,
+            default=pronoun_index,
+            onchange=self._on_pronoun_change
+        )
+
+        self.menu.add.vertical_margin(30)
+
+        # Action buttons
+        self.menu.add.button('Start Learning', self._start_conversation_from_menu)
+        self.menu.add.button('Settings', self._show_settings)
+        self.menu.add.button('Help', self._show_help_menu)
+        self.menu.add.button('Quit', pygame_menu.events.EXIT)
+
+        self.menu.add.vertical_margin(30)
+
+        # Ollama status
+        status_color = (100, 250, 100) if self.ollama_status else (250, 100, 100)
+        status_text = '✓ Ollama Connected' if self.ollama_status else '✗ Ollama Not Available'
+        self.menu.add.label(
+            status_text,
+            font_size=18,
+            font_color=status_color
+        )
+        self.menu.add.label(
+            f'Host: {game_data.ollama_host_url}',
+            font_size=14,
+            font_color=(160, 160, 180)
+        )
+
+        # Create settings menu
+        self._create_settings_menu()
+
+        # Create help menu
+        self._create_help_menu()
+
+    def _create_settings_menu(self):
+        """Create the settings menu."""
+        custom_theme = self.menu.get_theme().copy()
+
+        self.settings_menu = pygame_menu.Menu(
+            title='Settings',
+            width=self.width,
+            height=self.height,
+            theme=custom_theme
+        )
+
+        # Ollama host URL input
+        self.settings_menu.add.text_input(
+            'Ollama Host: ',
+            default=game_data.ollama_host_url,
+            onchange=self._on_ollama_host_change,
+            maxchar=50
+        )
+
+        # Model selection
+        models = [
+            ('Gemma 3n (e4b) - Larger', True),
+            ('Gemma 3n (e2b) - Smaller', False)
+        ]
+        model_index = 0 if game_data.use_gemma3n_latest else 1
+        self.settings_menu.add.selector(
+            'Model: ',
+            models,
+            default=model_index,
+            onchange=self._on_model_change
+        )
+
+        self.settings_menu.add.vertical_margin(30)
+
+        # Save and back buttons
+        self.settings_menu.add.button('Test Connection', self._test_ollama_connection)
+        self.settings_menu.add.button('Save Settings', self._save_settings)
+        self.settings_menu.add.button('Back', pygame_menu.events.BACK)
+
+    def _create_help_menu(self):
+        """Create the help menu."""
+        custom_theme = self.menu.get_theme().copy()
+
+        self.help_menu = pygame_menu.Menu(
+            title='Help',
+            width=self.width,
+            height=self.height,
+            theme=custom_theme
+        )
+
+        help_text = [
+            "CONTROLS:",
+            "",
+            "In Menu:",
+            "  • Use ARROW KEYS to navigate",
+            "  • ENTER to select",
+            "  • ESC to go back",
+            "",
+            "In Conversation:",
+            "  • Type your message and press ENTER to send",
+            "  • ESC to return to menu",
+            "  • TAB to switch topics",
+            "  • F1 for help",
+            "",
+            "LEARNING TIPS:",
+            "",
+            "• Ask questions to explore concepts deeply",
+            "• Request coding examples when needed",
+            "• The tutor adapts to your understanding level",
+            "• Topics build on each other - start with basics",
+            "",
+            "REQUIREMENTS:",
+            "",
+            "• Ollama must be running locally",
+            "• Gemma 3n model must be installed:",
+            "  ollama pull gemma3n:e4b"
+        ]
+
+        for line in help_text:
+            if line.startswith("  "):
+                self.help_menu.add.label(line, font_size=16, font_color=(160, 160, 180))
+            elif line == "":
+                self.help_menu.add.vertical_margin(10)
+            elif line.endswith(":"):
+                self.help_menu.add.label(line, font_size=20, font_color=(220, 220, 230))
+            else:
+                self.help_menu.add.label(line, font_size=18, font_color=(200, 200, 210))
+
+        self.help_menu.add.vertical_margin(30)
+        self.help_menu.add.button('Back', pygame_menu.events.BACK)
+
+    def _on_subject_change(self, value, subject):
+        """Handle subject change in menu."""
+        game_data.educational_subject = subject
+        game_data.save_settings()
+
+    def _on_name_change(self, value):
+        """Handle name change in menu."""
+        game_data.player_name = value
+        game_data.save_settings()
+
+    def _on_pronoun_change(self, value, pronouns):
+        """Handle pronoun change in menu."""
+        game_data.player_pronouns = pronouns
+        game_data.save_settings()
+
+    def _on_ollama_host_change(self, value):
+        """Handle Ollama host URL change."""
+        game_data.ollama_host_url = value
+
+    def _on_model_change(self, value, use_latest):
+        """Handle model selection change."""
+        game_data.use_gemma3n_latest = use_latest
+
+    def _save_settings(self):
+        """Save settings and update connection."""
+        game_data.save_settings()
+        self.conversation.ollama_service.host_url = game_data.ollama_host_url
+        self.ollama_status = self._check_ollama_status()
+        self._update_menu_status()
+
+    def _test_ollama_connection(self):
+        """Test Ollama connection and show result."""
+        self.conversation.ollama_service.host_url = game_data.ollama_host_url
+        if self.conversation.ollama_service.is_available():
+            models = self.conversation.ollama_service.list_models()
+            if models:
+                model_list = ', '.join(models[:5])  # Show first 5 models
+                self._show_message(f"Connected! Models: {model_list}")
+            else:
+                self._show_message("Connected but no models found!")
+        else:
+            self._show_message("Connection failed! Check Ollama is running.")
+
+    def _show_message(self, message: str):
+        """Show a temporary message (would need a toast/notification system)."""
+        print(message)  # For now, just print
+
+    def _check_ollama_status(self) -> bool:
+        """Check if Ollama is available."""
+        return self.conversation.ollama_service.is_available()
+
+    def _update_menu_status(self):
+        """Update Ollama status in menu."""
+        # This would need menu widget update support
+        pass
+
+    def _start_conversation_from_menu(self):
+        """Start conversation from menu."""
+        self.show_menu = False
+        self.menu.disable()
+        self.start_conversation()
+
+    def _show_settings(self):
+        """Show settings menu."""
+        self.settings_menu.mainloop(self.screen)
+
+    def _show_help_menu(self):
+        """Show help menu."""
+        self.help_menu.mainloop(self.screen)
 
     def _load_npc_backstory(self) -> str:
         """Load NPC backstory from file."""
@@ -78,18 +340,15 @@ class MLEducationGame:
 
     def _handle_checkpoint(self, signal):
         """Handle learning checkpoint signal."""
-        print(f"Checkpoint reached: {signal.data.get('learning_objective', 'Unknown')}")
         self.ui.add_message("system", f"🎯 Checkpoint: {signal.data.get('learning_objective', 'Progress saved')}")
 
     def _handle_topic_completed(self, signal):
         """Handle topic completion signal."""
         topic = signal.data.get('topic_name', 'Unknown topic')
-        print(f"Topic completed: {topic}")
         self.ui.add_message("system", f"✅ Topic Completed: {topic}")
 
     def _handle_assessment(self, signal):
         """Handle assessment question signal."""
-        print(f"Assessment: {signal.data.get('assessment_criteria', 'Evaluation in progress')}")
         self.ui.add_message("system", "📝 Assessment in progress...")
 
     def _handle_encouragement(self, signal):
@@ -107,6 +366,10 @@ class MLEducationGame:
     def start_conversation(self):
         """Start a new educational conversation."""
         if not self.is_conversing:
+            # Update UI with current subject
+            self.ui.update_subject(game_data.get_subject_name())
+            self.ui.clear_messages()
+
             # Prepare system prompt with NPC backstory
             system_prompt = f"{self.npc_backstory}\n\n{self.conversation.get_subject_prompt()}"
 
@@ -125,6 +388,9 @@ class MLEducationGame:
 
             # Update progress display
             self._update_progress_display()
+
+            # Show conversation UI
+            self.ui.show()
 
     def _update_progress_display(self):
         """Update the progress display in UI."""
@@ -168,43 +434,38 @@ class MLEducationGame:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    if self.is_conversing:
+            # Handle menu events
+            if self.show_menu:
+                self.menu.update([event])
+            else:
+                # Handle conversation events
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
                         self.is_conversing = False
                         self.conversation.end_conversation()
-                    else:
-                        self.running = False
+                        self.show_menu = True
+                        self.menu.enable()
+                        self.ui.hide()
 
-                elif event.key == pygame.K_F1:
-                    # Show help
-                    self.show_help()
+                    elif event.key == pygame.K_TAB:
+                        self.switch_subject()
 
-                elif event.key == pygame.K_TAB:
-                    # Switch subjects
-                    self.switch_subject()
+                    elif event.key == pygame.K_F1:
+                        self.show_help()
 
-                elif event.key == pygame.K_SPACE and not self.is_conversing:
-                    # Start conversation from menu
-                    self.start_conversation()
-
-            # Pass event to UI if conversing
-            if self.is_conversing:
+                # Pass event to UI
                 user_input = self.ui.handle_event(event)
                 if user_input and not self.awaiting_response:
-                    # Create task for async processing
                     asyncio.create_task(self.process_user_input(user_input))
 
     def show_help(self):
-        """Display help information."""
+        """Display help information in conversation."""
         help_text = """
 Controls:
 - Type your message and press Enter to send
-- ESC: Exit conversation / Quit
+- ESC: Return to menu
 - TAB: Switch ML topics
 - F1: Show this help
-- Arrow keys: Scroll conversation
-- Page Up/Down: Fast scroll
         """
         self.ui.add_message("system", help_text)
 
@@ -219,78 +480,32 @@ Controls:
 
         subject_name = game_data.get_subject_name()
         self.ui.add_message("system", f"Switched to: {subject_name}")
+        self.ui.update_subject(subject_name)
 
         # Restart conversation with new subject
-        if self.is_conversing:
-            self.conversation.end_conversation()
-            self.conversation = EducationalConversation()
-            self._register_signal_handlers()
-            self.start_conversation()
+        self.conversation.end_conversation()
+        self.conversation = EducationalConversation()
+        self._register_signal_handlers()
+        self.start_conversation()
 
-    def draw_menu(self):
-        """Draw the main menu."""
-        self.screen.fill((30, 30, 40))
-
-        font_large = pygame.font.Font(None, 48)
-        font_medium = pygame.font.Font(None, 32)
-        font_small = pygame.font.Font(None, 24)
-
-        # Title
-        title = font_large.render("ML Education with Local LLM", True, (220, 220, 230))
-        title_rect = title.get_rect(center=(self.width // 2, 100))
-        self.screen.blit(title, title_rect)
-
-        # Current subject
-        subject_text = f"Current Topic: {game_data.get_subject_name()}"
-        subject = font_medium.render(subject_text, True, (180, 180, 200))
-        subject_rect = subject.get_rect(center=(self.width // 2, 200))
-        self.screen.blit(subject, subject_rect)
-
-        # Instructions
-        instructions = [
-            "Press SPACE to start learning",
-            "Press TAB to change topic",
-            "Press S for settings",
-            "Press ESC to quit"
-        ]
-
-        y = 300
-        for instruction in instructions:
-            text = font_small.render(instruction, True, (160, 160, 180))
-            text_rect = text.get_rect(center=(self.width // 2, y))
-            self.screen.blit(text, text_rect)
-            y += 40
-
-        # Ollama status
-        if self.conversation.ollama_service.is_available():
-            status_text = f"✓ Ollama connected at {game_data.ollama_host_url}"
-            status_color = (100, 250, 100)
-        else:
-            status_text = f"✗ Ollama not available at {game_data.ollama_host_url}"
-            status_color = (250, 100, 100)
-
-        status = font_small.render(status_text, True, status_color)
-        status_rect = status.get_rect(center=(self.width // 2, self.height - 50))
-        self.screen.blit(status, status_rect)
-
-    def update(self, dt):
+    def update(self, dt: float):
         """Update game state."""
         if self.is_conversing:
             self.ui.update(dt)
 
     def draw(self):
         """Draw the game."""
-        if self.is_conversing:
-            self.ui.draw()
+        if self.show_menu:
+            self.menu.draw(self.screen)
         else:
-            self.draw_menu()
+            self.ui.draw()
 
         pygame.display.flip()
 
     async def run(self):
         """Main game loop."""
         # Check for Ollama on startup
-        if not self.conversation.ollama_service.is_available():
+        if not self.ollama_status:
             print(f"Warning: Ollama not available at {game_data.ollama_host_url}")
             print("Please ensure Ollama is running and the gemma3n model is installed.")
             print("Run: ollama pull gemma3n:e4b")
