@@ -217,6 +217,7 @@ class FlightSimulator:
         self.emergency_state = False
         self.course_deviations = 0
         self.system_alerts_count = 0
+        self.last_alert_time = 0  # Reset alert timing
 
         return True
 
@@ -331,6 +332,10 @@ class FlightSimulator:
 
     def _apply_drift_mechanics(self, dt: float):
         """Apply Desert Bus style drift mechanics - BALANCED VERSION."""
+        # NO DRIFT during taxi, takeoff, or landing phases
+        if self.flight_phase in [FlightPhase.TAXI, FlightPhase.TAKEOFF, FlightPhase.LANDING]:
+            return
+
         # Base drift rate - reduced when autopilot is active
         drift_multiplier = 0.3 if self.autopilot_enabled else 0.5  # Autopilot reduces drift effect
         base_drift = self.drift_rate * dt * drift_multiplier
@@ -357,12 +362,23 @@ class FlightSimulator:
             self.off_course_distance += 0.03 * dt  # Further reduced penalty
             if heading_error > critical_threshold:
                 self.course_deviations += 1
-                if not self.autopilot_enabled:
-                    self.system_alerts.append("Course deviation warning")
-                else:
-                    # Only warn if autopilot is struggling significantly
-                    if heading_error > 90:
-                        self.system_alerts.append("Autopilot course correction")
+                # Only add alerts if we haven't warned recently
+                current_time = time.time()
+                if not hasattr(self, 'last_alert_time'):
+                    self.last_alert_time = 0
+
+                if current_time - self.last_alert_time > 10:  # Only warn every 10 seconds
+                    if not self.autopilot_enabled:
+                        self.system_alerts.append("Course deviation warning")
+                    else:
+                        # Only warn if autopilot is struggling significantly
+                        if heading_error > 90:
+                            self.system_alerts.append("Autopilot course correction")
+                    self.last_alert_time = current_time
+
+                    # Limit alert list size to prevent spam
+                    if len(self.system_alerts) > 10:
+                        self.system_alerts = self.system_alerts[-5:]  # Keep only last 5
 
     def _update_position(self, dt: float):
         """Update aircraft position based on speed and heading."""
@@ -480,25 +496,28 @@ class FlightSimulator:
         if not self.autopilot_enabled:
             return
 
-        # === HEADING CONTROL ===
-        heading_error = self.target_heading - self.heading
-        if heading_error > 180:
-            heading_error -= 360
-        elif heading_error < -180:
-            heading_error += 360
+        # NO AUTOPILOT HEADING CORRECTIONS during taxi, takeoff, or landing
+        # Only apply heading control during climb, cruise, descent, and approach
+        if self.flight_phase in [FlightPhase.CLIMB, FlightPhase.CRUISE, FlightPhase.DESCENT, FlightPhase.APPROACH]:
+            # === HEADING CONTROL ===
+            heading_error = self.target_heading - self.heading
+            if heading_error > 180:
+                heading_error -= 360
+            elif heading_error < -180:
+                heading_error += 360
 
-        # More effective and stable autopilot correction
-        correction_rate = 1.5  # Slightly reduced for smoother control
-        max_correction = correction_rate * dt
+            # More effective and stable autopilot correction
+            correction_rate = 1.5  # Slightly reduced for smoother control
+            max_correction = correction_rate * dt
 
-        if abs(heading_error) > 0.2:  # Even smaller threshold for smoother control
-            if heading_error > 0:
-                correction = min(heading_error, max_correction)
-            else:
-                correction = max(heading_error, -max_correction)
+            if abs(heading_error) > 0.2:  # Even smaller threshold for smoother control
+                if heading_error > 0:
+                    correction = min(heading_error, max_correction)
+                else:
+                    correction = max(heading_error, -max_correction)
 
-            self.heading += correction
-            self.heading = self.heading % 360
+                self.heading += correction
+                self.heading = self.heading % 360
 
         # === ENGINE TEMPERATURE MANAGEMENT VIA SPEED CONTROL ===
         target_temp = 200  # Target operating temperature

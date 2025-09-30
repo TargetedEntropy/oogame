@@ -117,8 +117,8 @@ class FlightUIEnhanced:
             'compass_rotation': 0,
             'altitude_scroll': 0,
             'speed_scroll': 0,
-            'horizon_pitch': 0,
-            'horizon_roll': 0,
+            'horizon_pitch': 0.0,  # Start level
+            'horizon_roll': 0.0,   # Start level
             'warning_flash': 0,
             'radar_sweep': 0,
             'beacon_flash': 0,
@@ -353,9 +353,21 @@ class FlightUIEnhanced:
             else:
                 self.animations['horizon_pitch'] *= 0.95  # Return to level
 
-            # Simulate roll during turns
+            # Simulate roll during turns - MUCH more stable
             heading_diff = status['heading'] - status['target_heading']
-            self.animations['horizon_roll'] = max(-30, min(30, heading_diff * 0.5))
+            if heading_diff > 180:
+                heading_diff -= 360
+            elif heading_diff < -180:
+                heading_diff += 360
+
+            # Limit roll effect and only during actual flight phases (not taxi)
+            if status['flight_phase'] in ['climb', 'cruise', 'descent', 'approach']:
+                target_roll = max(-15, min(15, heading_diff * 0.2))  # Much smaller effect
+                # Gradually move toward target roll
+                self.animations['horizon_roll'] += (target_roll - self.animations['horizon_roll']) * dt * 2
+            else:
+                # Return to level during taxi, takeoff, landing
+                self.animations['horizon_roll'] *= 0.9
 
     def _update_particles(self, dt):
         """Update particle effects."""
@@ -570,8 +582,8 @@ class FlightUIEnhanced:
         clip_rect = pygame.Rect(x - size, y - size, size * 2, size * 2)
         self.screen.set_clip(clip_rect)
 
-        # Draw sky and ground with pitch
-        pitch_pixels = int(self.animations['horizon_pitch'] * 2)
+        # Draw sky and ground with pitch - limit to prevent wild spinning
+        pitch_pixels = int(max(-30, min(30, self.animations['horizon_pitch'])) * 2)
 
         # Sky (blue gradient)
         sky_rect = pygame.Rect(x - size, y - size - pitch_pixels, size * 2, size)
@@ -585,8 +597,8 @@ class FlightUIEnhanced:
         pygame.draw.line(self.screen, self.colors['text_highlight'],
                         (x - size, y - pitch_pixels), (x + size, y - pitch_pixels), 3)
 
-        # Roll indicator (bank angle)
-        roll = self.animations['horizon_roll']
+        # Roll indicator (bank angle) - limit to prevent wild spinning
+        roll = max(-30, min(30, self.animations['horizon_roll']))
         if abs(roll) > 0.1:
             # Draw roll arc
             arc_rect = pygame.Rect(x - size + 10, y - size + 10, (size - 10) * 2, (size - 10) * 2)
