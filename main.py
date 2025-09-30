@@ -45,6 +45,7 @@ class MLEducationGame:
         self.is_conversing = False
         self.awaiting_response = False
         self.show_menu = True
+        self.current_submenu = None  # Track which submenu is active
 
         # Register signal handlers
         self._register_signal_handlers()
@@ -170,7 +171,8 @@ class MLEducationGame:
         if location and npc:
             # Show travel message
             self._show_message(f"Traveled to {location.name}! Met {npc.name}")
-            # Start conversation - the travel menu will close automatically when mainloop exits
+            # Close submenu and start conversation
+            self.current_submenu = None
             self.show_menu = False
             self.menu.disable()
             self.start_conversation()
@@ -244,7 +246,7 @@ class MLEducationGame:
         # Create a completely fresh menu each time to avoid state issues
         custom_theme = self.menu.get_theme().copy()
 
-        settings_menu = pygame_menu.Menu(
+        self.settings_menu = pygame_menu.Menu(
             title='Settings',
             width=self.width,
             height=self.height,
@@ -252,7 +254,7 @@ class MLEducationGame:
         )
 
         # Ollama host URL input
-        settings_menu.add.text_input(
+        self.settings_menu.add.text_input(
             'Ollama Host: ',
             default=game_data.ollama_host_url,
             onchange=self._on_ollama_host_change,
@@ -265,29 +267,36 @@ class MLEducationGame:
             ('Gemma 3n (e2b) - Smaller', False)
         ]
         model_index = 0 if game_data.use_gemma3n_latest else 1
-        settings_menu.add.selector(
+        self.settings_menu.add.selector(
             'Model: ',
             models,
             default=model_index,
             onchange=self._on_model_change
         )
 
-        settings_menu.add.vertical_margin(30)
+        self.settings_menu.add.vertical_margin(30)
 
         # Save and back buttons
-        settings_menu.add.button('Test Connection', self._test_ollama_connection)
-        settings_menu.add.button('Save Settings', self._save_settings)
-        settings_menu.add.button('Back', pygame_menu.events.BACK)
+        self.settings_menu.add.button('Test Connection', self._test_ollama_connection)
+        self.settings_menu.add.button('Save Settings', self._save_settings)
+        self.settings_menu.add.button('Back', self._back_to_main_menu)
 
-        # Show the fresh menu
-        settings_menu.mainloop(self.screen)
+        # Set as current submenu instead of using mainloop
+        self.current_submenu = self.settings_menu
+        self.show_menu = False
+
+    def _back_to_main_menu(self):
+        """Return to main menu from submenu."""
+        self.current_submenu = None
+        self.show_menu = True
+        self.menu.enable()
 
     def _show_help_menu(self):
         """Show help menu."""
         # Create a completely fresh menu each time to avoid state issues
         custom_theme = self.menu.get_theme().copy()
 
-        help_menu = pygame_menu.Menu(
+        self.help_menu = pygame_menu.Menu(
             title='Help',
             width=self.width,
             height=self.height,
@@ -324,26 +333,27 @@ class MLEducationGame:
 
         for line in help_text:
             if line.startswith("  "):
-                help_menu.add.label(line, font_size=16, font_color=(160, 160, 180))
+                self.help_menu.add.label(line, font_size=16, font_color=(160, 160, 180))
             elif line == "":
-                help_menu.add.vertical_margin(10)
+                self.help_menu.add.vertical_margin(10)
             elif line.endswith(":"):
-                help_menu.add.label(line, font_size=20, font_color=(220, 220, 230))
+                self.help_menu.add.label(line, font_size=20, font_color=(220, 220, 230))
             else:
-                help_menu.add.label(line, font_size=18, font_color=(200, 200, 210))
+                self.help_menu.add.label(line, font_size=18, font_color=(200, 200, 210))
 
-        help_menu.add.vertical_margin(30)
-        help_menu.add.button('Back', pygame_menu.events.BACK)
+        self.help_menu.add.vertical_margin(30)
+        self.help_menu.add.button('Back', self._back_to_main_menu)
 
-        # Show the fresh menu
-        help_menu.mainloop(self.screen)
+        # Set as current submenu instead of using mainloop
+        self.current_submenu = self.help_menu
+        self.show_menu = False
 
     def _show_travel_menu(self):
         """Show travel menu."""
         # Create a completely fresh menu each time to avoid state issues
         custom_theme = self.menu.get_theme().copy()
 
-        travel_menu = pygame_menu.Menu(
+        self.travel_menu = pygame_menu.Menu(
             title='Travel to Airport',
             width=self.width,
             height=self.height,
@@ -352,25 +362,25 @@ class MLEducationGame:
 
         # Current location info
         if npc_manager.current_location:
-            travel_menu.add.label(
+            self.travel_menu.add.label(
                 f'Current: {npc_manager.current_location.name}',
                 font_size=20,
                 font_color=(180, 220, 180)
             )
             if npc_manager.current_npc:
-                travel_menu.add.label(
+                self.travel_menu.add.label(
                     f'NPC: {npc_manager.current_npc.name}',
                     font_size=16,
                     font_color=(150, 150, 200)
                 )
         else:
-            travel_menu.add.label(
+            self.travel_menu.add.label(
                 'No current location',
                 font_size=20,
                 font_color=(180, 180, 180)
             )
 
-        travel_menu.add.vertical_margin(20)
+        self.travel_menu.add.vertical_margin(20)
 
         # Add location buttons
         for location in npc_manager.locations:
@@ -379,17 +389,18 @@ class MLEducationGame:
             if npc_manager.current_location and location.id == npc_manager.current_location.id:
                 button_text = f"→ {button_text} (Current)"
 
-            travel_menu.add.button(
+            self.travel_menu.add.button(
                 button_text,
                 self._travel_to_location,
                 location.id
             )
 
-        travel_menu.add.vertical_margin(30)
-        travel_menu.add.button('Back', pygame_menu.events.BACK)
+        self.travel_menu.add.vertical_margin(30)
+        self.travel_menu.add.button('Back', self._back_to_main_menu)
 
-        # Show the fresh menu
-        travel_menu.mainloop(self.screen)
+        # Set as current submenu instead of using mainloop
+        self.current_submenu = self.travel_menu
+        self.show_menu = False
 
     def _load_npc_backstory(self) -> str:
         """Load NPC backstory from file."""
@@ -523,6 +534,12 @@ class MLEducationGame:
             # Handle menu events
             if self.show_menu:
                 self.menu.update([event])
+            elif self.current_submenu:
+                # Handle submenu events
+                self.current_submenu.update([event])
+                # Handle ESC key to go back to main menu
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    self._back_to_main_menu()
             else:
                 # Handle conversation events
                 if event.type == pygame.KEYDOWN:
@@ -585,6 +602,8 @@ Ask about aircraft specifications, operations, or history!
         """Draw the game."""
         if self.show_menu:
             self.menu.draw(self.screen)
+        elif self.current_submenu:
+            self.current_submenu.draw(self.screen)
         else:
             self.ui.draw()
 
