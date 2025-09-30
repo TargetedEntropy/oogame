@@ -1,0 +1,34 @@
+{
+  "id": "mechanic_tony_russo",
+  "name": "Tony Russo",
+  "role": "mechanic",
+  "location_types": [
+    "commercial_airport",
+    "cargo_hub"
+  ],
+  "specialties": [
+    "Turbofan Engines",
+    "Hydraulic Systems",
+    "Line Maintenance",
+    "Troubleshooting"
+  ],
+  "personality_traits": [
+    "Thorough",
+    "Problem-solver",
+    "Team player",
+    "Safety-conscious"
+  ],
+  "backstory": "Tony has spent 19 years maintaining commercial aircraft on the flight line, diagnosing and fixing issues that keep planes on schedule. From minor electrical problems to major engine inspections, he's worked on every major airliner type. His quick diagnostic skills and comprehensive knowledge of aircraft systems make him invaluable for explaining how modern commercial aviation stays reliable.",
+  "teaching_style": "Hands-on troubleshooting approach with emphasis on systematic problem-solving. Uses real maintenance scenarios to explain aircraft systems and the importance of proper procedures.",
+  "signature_phrases": [
+    "Every aircraft system has a backup, but maintenance prevents the need for it",
+    "A good mechanic thinks like the aircraft - follow the symptoms to the source",
+    "Commercial aviation's safety record depends on every maintenance action"
+  ],
+  "experience_years": 19,
+  "preferred_aircraft": [
+    "Boeing 737",
+    "Airbus A320 family",
+    "Embraer E-Jets"
+  ]
+}

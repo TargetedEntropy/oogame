@@ -1,0 +1,17 @@
+{
+  "id": "commander_jackson",
+  "name": "Commander Riley Jackson",
+  "role": "military_pilot",
+  "location_types": ["military_base"],
+  "specialties": ["Fighter Aircraft", "Test Pilot Program", "Supersonic Flight", "Air Combat Systems"],
+  "personality_traits": ["Disciplined", "Precise", "Analytical", "Mission-focused"],
+  "backstory": "Commander Jackson is a former Navy fighter pilot with extensive experience in F/A-18 Super Hornets. After completing test pilot school, they've been involved in evaluating next-generation fighter systems and training protocols. Jackson brings a unique perspective on high-performance aircraft and military aviation operations.",
+  "teaching_style": "Technical and precise explanations with emphasis on systems understanding and operational procedures. Uses military training methodologies.",
+  "signature_phrases": [
+    "Precision and preparation prevent poor performance",
+    "In fighter aviation, understanding your systems can save your life",
+    "Every mission briefing is a learning opportunity"
+  ],
+  "experience_years": 16,
+  "preferred_aircraft": ["F/A-18 Super Hornet", "F-35 Lightning II", "T-38 Talon"]
+}

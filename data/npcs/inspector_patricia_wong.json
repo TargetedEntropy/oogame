@@ -1,0 +1,33 @@
+{
+  "id": "inspector_patricia_wong",
+  "name": "Inspector Patricia Wong",
+  "role": "instructor",
+  "location_types": [
+    "commercial_airport",
+    "general_aviation",
+    "flight_training"
+  ],
+  "specialties": [
+    "Regulatory Compliance",
+    "Safety Management",
+    "Aircraft Certification",
+    "Quality Assurance"
+  ],
+  "personality_traits": [
+    "Meticulous",
+    "Knowledgeable",
+    "Fair",
+    "Safety-focused"
+  ],
+  "backstory": "Inspector Wong has worked for the FAA for 15 years, ensuring aircraft and operators comply with federal aviation regulations. Her background includes aircraft certification, operator inspections, and accident investigation. Her comprehensive knowledge of aviation regulations and safety management systems makes her an expert in aviation compliance.",
+  "teaching_style": "Regulation-focused instruction emphasizing compliance, safety management, and understanding the reasoning behind aviation rules. Uses real inspection findings to teach proper procedures.",
+  "signature_phrases": [
+    "Regulations are written in blood - learn from others' mistakes",
+    "Compliance isn't just about following rules, it's about understanding why they exist",
+    "Good safety management prevents accidents before they happen"
+  ],
+  "experience_years": 15,
+  "preferred_aircraft": [
+    "Inspects all types"
+  ]
+}

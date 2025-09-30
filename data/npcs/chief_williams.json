@@ -1,0 +1,33 @@
+{
+  "id": "chief_williams",
+  "name": "Chief Marcus Williams",
+  "role": "airport_manager",
+  "location_types": [
+    "commercial_airport",
+    "general_aviation"
+  ],
+  "specialties": [
+    "Airport Operations",
+    "Emergency Response",
+    "Ground Support Equipment",
+    "Facility Management"
+  ],
+  "personality_traits": [
+    "Organized",
+    "Level-headed",
+    "Communicative",
+    "Problem-solver"
+  ],
+  "backstory": "Chief Williams started as a ground crew member 20 years ago and worked his way up through operations management. He's coordinated responses to everything from severe weather events to aircraft emergencies. His comprehensive understanding of airport operations from the ground up makes him an invaluable resource for understanding the complete aviation system.",
+  "teaching_style": "Big-picture approach showing how all airport operations interconnect. Uses case studies from actual airport incidents to teach systems thinking and emergency preparedness.",
+  "signature_phrases": [
+    "An airport is like a small city that never sleeps",
+    "Every aircraft movement involves a dozen support systems",
+    "Good operations are invisible - you only notice when something goes wrong"
+  ],
+  "experience_years": 20,
+  "preferred_aircraft": [
+    "Ground support vehicles",
+    "Emergency response equipment"
+  ]
+}

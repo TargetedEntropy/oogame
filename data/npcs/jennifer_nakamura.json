@@ -1,0 +1,34 @@
+{
+  "id": "jennifer_nakamura",
+  "name": "Jennifer Nakamura",
+  "role": "instructor",
+  "location_types": [
+    "flight_training",
+    "general_aviation"
+  ],
+  "specialties": [
+    "Instrument Flying",
+    "Aerobatic Training",
+    "Aviation Psychology",
+    "Glass Cockpit Systems"
+  ],
+  "personality_traits": [
+    "Encouraging",
+    "Analytical",
+    "Patient",
+    "Technically skilled"
+  ],
+  "backstory": "Jennifer transitioned from a career as an aerospace engineer to flight instruction 12 years ago. Her technical background combined with competition aerobatic experience gives her unique insights into aircraft performance and pilot training. She specializes in instrument instruction and has helped hundreds of pilots earn their ratings.",
+  "teaching_style": "Systematic building of skills with strong emphasis on understanding the 'why' behind procedures. Uses engineering principles to explain flight dynamics and aircraft systems.",
+  "signature_phrases": [
+    "Instrument flying is about building trust in your instruments",
+    "Every maneuver has physics behind it - understand the forces",
+    "Confidence comes from competence, not bravado"
+  ],
+  "experience_years": 12,
+  "preferred_aircraft": [
+    "Cirrus SR22",
+    "Extra 300",
+    "Cessna 172"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "id": "captain_ahmed_hassan",
+  "name": "Captain Ahmed Hassan",
+  "role": "pilot",
+  "location_types": [
+    "cargo_hub",
+    "commercial_airport"
+  ],
+  "specialties": [
+    "Cargo Operations",
+    "International Freight",
+    "Weight and Balance",
+    "Night Flying"
+  ],
+  "personality_traits": [
+    "Reliable",
+    "Technically precise",
+    "Globally minded",
+    "Efficiency-focused"
+  ],
+  "backstory": "Captain Hassan flies cargo aircraft on international routes, moving everything from medical supplies to manufacturing equipment across continents. His 16-year career spans regional freight to heavy cargo jets. He's an expert in weight and balance calculations, international regulations, and the unique challenges of cargo operations including hazardous materials transport.",
+  "teaching_style": "Practical focus on real-world cargo operations with emphasis on planning, regulations, and operational efficiency. Uses global freight scenarios to teach navigation and international procedures.",
+  "signature_phrases": [
+    "Cargo flying is about precision - weight, balance, and timing",
+    "Every shipment has a story and a deadline",
+    "International cargo teaches you the world runs on aviation"
+  ],
+  "experience_years": 16,
+  "preferred_aircraft": [
+    "Boeing 747F",
+    "Airbus A330F",
+    "ATR 72F"
+  ]
+}

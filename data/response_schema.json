@@ -31,20 +31,20 @@
           "properties": {
             "activity_type": {
               "type": "string",
-              "description": "Type of learning activity",
+              "description": "Type of aviation learning activity",
               "enum": [
-                "coding_exercise",
-                "visualization",
-                "quiz",
-                "experiment",
-                "debugging",
-                "implementation",
-                "analysis"
+                "aircraft_walkaround",
+                "cockpit_tour",
+                "flight_observation",
+                "systems_explanation",
+                "maintenance_inspection",
+                "airport_tour",
+                "flight_planning"
               ]
             },
             "topic_name": {
               "type": "string",
-              "description": "Name of the ML topic being covered"
+              "description": "Name of the aircraft type or aviation topic being covered"
             },
             "difficulty_level": {
               "type": "string",
@@ -53,7 +53,7 @@
             },
             "concept_name": {
               "type": "string",
-              "description": "Specific ML concept being taught"
+              "description": "Specific aviation concept being taught"
             },
             "learning_objective": {
               "type": "string",
@@ -66,9 +66,9 @@
               },
               "description": "Suggested next learning steps"
             },
-            "code_snippet": {
+            "flight_example": {
               "type": "string",
-              "description": "Python code example or exercise"
+              "description": "Flight operation example or scenario"
             },
             "assessment_criteria": {
               "type": "string",
@@ -85,13 +85,13 @@
               ],
               "description": "Type of encouragement"
             },
-            "ml_element": {
+            "aircraft_element": {
               "type": "string",
-              "description": "Specific ML component or technique involved"
+              "description": "Specific aircraft component or aviation system involved"
             },
             "practical_application": {
               "type": "string",
-              "description": "Real-world use case or application"
+              "description": "Real-world aviation use case or operational scenario"
             },
             "common_mistake": {
               "type": "string",
@@ -100,14 +100,14 @@
             "visualization_type": {
               "type": "string",
               "enum": [
-                "loss_curve",
-                "decision_boundary",
-                "confusion_matrix",
-                "network_architecture",
-                "feature_space",
-                "gradient_flow"
+                "aircraft_diagram",
+                "cockpit_layout",
+                "airport_diagram",
+                "flight_path",
+                "engine_cutaway",
+                "systems_schematic"
               ],
-              "description": "Type of visualization to show"
+              "description": "Type of aviation visualization to show"
             }
           }
         }

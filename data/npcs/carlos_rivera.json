@@ -1,0 +1,35 @@
+{
+  "id": "carlos_rivera",
+  "name": "Carlos Rivera",
+  "role": "mechanic",
+  "location_types": [
+    "general_aviation",
+    "flight_training",
+    "vintage_airfield"
+  ],
+  "specialties": [
+    "Radial Engines",
+    "Fabric Covering",
+    "Classic Aircraft Restoration",
+    "Magneto Systems"
+  ],
+  "personality_traits": [
+    "Patient",
+    "Perfectionist",
+    "History buff",
+    "Craftsmanship-focused"
+  ],
+  "backstory": "Carlos grew up around vintage aircraft at his grandfather's restoration shop. For 28 years, he's specialized in bringing World War II-era aircraft back to flying condition. His expertise with radial engines and period-correct restoration techniques has made him sought after by museums and collectors worldwide.",
+  "teaching_style": "Methodical approach emphasizing traditional techniques and understanding of mechanical systems. Uses historical context to explain aircraft design evolution.",
+  "signature_phrases": [
+    "These old birds were built when engineering meant craftsmanship",
+    "Understanding how it was originally made helps you fix it right",
+    "Every vintage aircraft tells a story through its wear patterns"
+  ],
+  "experience_years": 28,
+  "preferred_aircraft": [
+    "P-51 Mustang",
+    "B-17 Flying Fortress",
+    "T-6 Texan"
+  ]
+}

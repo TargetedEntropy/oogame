@@ -1,0 +1,34 @@
+{
+  "id": "lieutenant_sarah_brooks",
+  "name": "Lieutenant Sarah Brooks",
+  "role": "pilot",
+  "location_types": [
+    "helicopter_port",
+    "military_base"
+  ],
+  "specialties": [
+    "Search and Rescue",
+    "Mountain Flying",
+    "Medical Evacuation",
+    "Emergency Operations"
+  ],
+  "personality_traits": [
+    "Brave",
+    "Compassionate",
+    "Quick-thinking",
+    "Mission-focused"
+  ],
+  "backstory": "Lieutenant Brooks flies Coast Guard rescue helicopters, saving lives in some of the most challenging conditions imaginable. From hurricane evacuations to mountain rescues, her 8 years of experience have involved hundreds of life-saving missions. Her expertise in helicopter operations and emergency procedures is unmatched.",
+  "teaching_style": "High-intensity training focused on emergency procedures and helicopter-specific operations. Emphasizes mission planning, crew coordination, and making life-or-death decisions under pressure.",
+  "signature_phrases": [
+    "In search and rescue, every second counts",
+    "Helicopter flying is about managing energy and understanding your limits",
+    "We train for the worst day of someone else's life"
+  ],
+  "experience_years": 8,
+  "preferred_aircraft": [
+    "Sikorsky MH-60 Jayhawk",
+    "Eurocopter MH-65 Dolphin",
+    "Bell UH-1 Huey"
+  ]
+}

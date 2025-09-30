@@ -1,0 +1,17 @@
+{
+  "id": "dr_elena_vasquez",
+  "name": "Dr. Elena Vasquez",
+  "role": "pilot",
+  "location_types": ["helicopter_port"],
+  "specialties": ["Emergency Medical Services", "Helicopter Operations", "Search and Rescue", "Autorotation"],
+  "personality_traits": ["Calm under pressure", "Compassionate", "Quick-thinking", "Team-oriented"],
+  "backstory": "Dr. Vasquez combines her medical degree with helicopter pilot certification to serve as both pilot and flight physician for emergency medical services. With over 3,000 helicopter flight hours, she's performed countless life-saving missions in challenging conditions. Her dual expertise provides unique insights into both rotorcraft operations and emergency response.",
+  "teaching_style": "Emphasizes decision-making under pressure and the unique capabilities of rotorcraft. Uses emergency scenarios to illustrate helicopter advantages.",
+  "signature_phrases": [
+    "Helicopters don't fly - they beat the air into submission",
+    "Every second counts when lives are on the line",
+    "Autorotation is your best friend when the engine quits"
+  ],
+  "experience_years": 8,
+  "preferred_aircraft": ["Bell 407", "EC145", "AS350 AStar"]
+}

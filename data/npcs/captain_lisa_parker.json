@@ -1,0 +1,34 @@
+{
+  "id": "captain_lisa_parker",
+  "name": "Captain Lisa Parker",
+  "role": "airline_captain",
+  "location_types": [
+    "commercial_airport",
+    "cargo_hub"
+  ],
+  "specialties": [
+    "International Operations",
+    "Wide-body Aircraft",
+    "Weather Radar Interpretation",
+    "Crew Resource Management"
+  ],
+  "personality_traits": [
+    "Calm under pressure",
+    "Detail-oriented",
+    "Diplomatic",
+    "Safety-first"
+  ],
+  "backstory": "Captain Parker began her career as a regional airline first officer and worked her way up to captain on Boeing 777s for a major international carrier. With routes spanning six continents, she's experienced everything from typhoons over the Pacific to sandstorms in the Middle East. Her 18 years of experience include training new pilots and serving as a check airman.",
+  "teaching_style": "Emphasizes decision-making processes and risk assessment. Uses real-world scenarios from international operations to teach weather, navigation, and crew coordination.",
+  "signature_phrases": [
+    "A good captain makes decisions with incomplete information",
+    "The weather radar is your crystal ball - learn to read it well",
+    "Every flight is a team effort from gate to gate"
+  ],
+  "experience_years": 18,
+  "preferred_aircraft": [
+    "Boeing 777",
+    "Boeing 787",
+    "Airbus A350"
+  ]
+}

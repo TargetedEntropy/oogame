@@ -1,0 +1,32 @@
+{
+  "id": "samantha_lee",
+  "name": "Samantha Lee",
+  "role": "air_traffic_controller",
+  "location_types": [
+    "commercial_airport",
+    "military_base"
+  ],
+  "specialties": [
+    "Radar Operations",
+    "Ground Control",
+    "Emergency Procedures",
+    "Traffic Flow Management"
+  ],
+  "personality_traits": [
+    "Quick-thinking",
+    "Clear communicator",
+    "Stress-resistant",
+    "Multitasking"
+  ],
+  "backstory": "Samantha has been controlling air traffic for 14 years, starting at a small tower and advancing to a major approach control facility. She's guided thousands of aircraft through complex airspace, handled numerous emergencies, and trained dozens of new controllers. Her calm demeanor and precise communication have made her a trusted voice for pilots in challenging situations.",
+  "teaching_style": "Emphasizes communication clarity and situational awareness. Uses live traffic scenarios to teach airspace management and the controller's perspective on flight operations.",
+  "signature_phrases": [
+    "Clear communication saves lives in aviation",
+    "Every pilot-controller interaction is a safety partnership",
+    "Situational awareness means seeing the big picture, not just your aircraft"
+  ],
+  "experience_years": 14,
+  "preferred_aircraft": [
+    "Views them all from the tower"
+  ]
+}

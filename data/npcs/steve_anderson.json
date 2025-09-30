@@ -1,0 +1,34 @@
+{
+  "id": "steve_anderson",
+  "name": "Steve Anderson",
+  "role": "pilot",
+  "location_types": [
+    "general_aviation",
+    "commercial_airport"
+  ],
+  "specialties": [
+    "Corporate Aviation",
+    "Jet Operations",
+    "Executive Transport",
+    "International Flying"
+  ],
+  "personality_traits": [
+    "Professional",
+    "Discreet",
+    "Service-oriented",
+    "Adaptable"
+  ],
+  "backstory": "Steve has been flying corporate executives around the world for 21 years, from Fortune 500 CEOs to government officials. His experience with business jets, international operations, and high-profile passengers has taught him the unique demands of corporate aviation, where schedule flexibility and passenger service are paramount.",
+  "teaching_style": "Focuses on professional presentation, customer service aspects of aviation, and the operational differences of business jet flying. Emphasizes flexibility and problem-solving in challenging situations.",
+  "signature_phrases": [
+    "Corporate flying is about enabling business, not just transportation",
+    "Flexibility and backup plans are your best tools",
+    "Your passengers' time is more valuable than the fuel you save"
+  ],
+  "experience_years": 21,
+  "preferred_aircraft": [
+    "Gulfstream G650",
+    "Bombardier Global 6000",
+    "Cessna Citation X+"
+  ]
+}

@@ -13,7 +13,7 @@ class Message:
 
 class OllamaService:
     def __init__(self, host_url: str = "http://localhost:11434"):
-        self.host_url = host_url.rstrip('/')
+        self.host_url = host_url.rstrip("/")
         self.timeout = 600  # 10 minutes
         self.keep_alive = "60m"  # 60 minutes
 
@@ -31,14 +31,18 @@ class OllamaService:
             response = requests.get(f"{self.host_url}/api/tags", timeout=10)
             if response.status_code == 200:
                 data = response.json()
-                return [model['name'] for model in data.get('models', [])]
+                return [model["name"] for model in data.get("models", [])]
         except requests.RequestException as e:
             print(f"Error listing models: {e}")
         return None
 
-    def chat(self, model: str, messages: List[Message],
-             response_format: Optional[Dict] = None,
-             stream: bool = True) -> Generator[str, None, None]:
+    def chat(
+        self,
+        model: str,
+        messages: List[Message],
+        response_format: Optional[Dict] = None,
+        stream: bool = True,
+    ) -> Generator[str, None, None]:
         """
         Send chat request to Ollama and yield response chunks.
 
@@ -58,11 +62,7 @@ class OllamaService:
             "messages": [asdict(msg) for msg in messages],
             "stream": stream,
             "keep_alive": self.keep_alive,
-            "options": {
-                "temperature": 0.7,
-                "top_p": 0.9,
-                "seed": 42
-            }
+            "options": {"temperature": 0.7, "top_p": 0.9, "seed": 42},
         }
 
         if response_format:
@@ -70,10 +70,7 @@ class OllamaService:
 
         try:
             response = requests.post(
-                endpoint,
-                json=payload,
-                stream=stream,
-                timeout=self.timeout
+                endpoint, json=payload, stream=stream, timeout=self.timeout
             )
 
             if response.status_code != 200:
@@ -85,26 +82,30 @@ class OllamaService:
                     if line:
                         try:
                             chunk = json.loads(line)
-                            if 'message' in chunk:
-                                content = chunk['message'].get('content', '')
+                            if "message" in chunk:
+                                content = chunk["message"].get("content", "")
                                 if content:
                                     yield content
-                            if chunk.get('done', False):
+                            if chunk.get("done", False):
                                 break
                         except json.JSONDecodeError:
                             continue
             else:
                 data = response.json()
-                if 'message' in data:
-                    yield data['message'].get('content', '')
+                if "message" in data:
+                    yield data["message"].get("content", "")
 
         except requests.Timeout:
             yield "Error: Request timed out. Please check your Ollama service."
         except requests.RequestException as e:
             yield f"Error: {str(e)}"
 
-    def chat_sync(self, model: str, messages: List[Message],
-                  response_format: Optional[Dict] = None) -> str:
+    def chat_sync(
+        self,
+        model: str,
+        messages: List[Message],
+        response_format: Optional[Dict] = None,
+    ) -> str:
         """
         Send chat request and return complete response.
 
@@ -119,11 +120,15 @@ class OllamaService:
         response_parts = []
         for chunk in self.chat(model, messages, response_format, stream=True):
             response_parts.append(chunk)
-        return ''.join(response_parts)
+        return "".join(response_parts)
 
-    def generate_with_retry(self, model: str, messages: List[Message],
-                           response_format: Optional[Dict] = None,
-                           max_retries: int = 3) -> Optional[str]:
+    def generate_with_retry(
+        self,
+        model: str,
+        messages: List[Message],
+        response_format: Optional[Dict] = None,
+        max_retries: int = 3,
+    ) -> Optional[str]:
         """
         Generate response with retry logic for better reliability.
 
@@ -145,7 +150,7 @@ class OllamaService:
                 print(f"Attempt {attempt + 1} failed: {e}")
 
             if attempt < max_retries - 1:
-                time.sleep(2 ** attempt)  # Exponential backoff
+                time.sleep(2**attempt)  # Exponential backoff
 
         return None
 

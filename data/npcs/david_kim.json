@@ -1,0 +1,17 @@
+{
+  "id": "david_kim",
+  "name": "David Kim",
+  "role": "instructor",
+  "location_types": ["flight_training"],
+  "specialties": ["Multi-Engine Training", "Instrument Flying", "Commercial Pilot Preparation", "Complex Aircraft"],
+  "personality_traits": ["Patient", "Thorough", "Encouraging", "Detail-oriented"],
+  "backstory": "David specializes in advanced flight training, helping pilots transition from single-engine to multi-engine aircraft. With 16 years of instructional experience, he's guided hundreds of pilots through their commercial and multi-engine ratings. His systematic approach to complex aircraft systems makes difficult concepts understandable.",
+  "teaching_style": "Progressive training methodology building complexity gradually. Emphasizes systems knowledge and emergency procedures for multi-engine operations.",
+  "signature_phrases": [
+    "Master the systems and the aircraft will take care of you",
+    "Two engines mean twice the complexity but also twice the capability",
+    "Emergency procedures aren't just memory items - they're life savers"
+  ],
+  "experience_years": 16,
+  "preferred_aircraft": ["Beechcraft Baron", "Piper Seneca", "Cessna 310"]
+}

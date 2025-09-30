@@ -1,0 +1,17 @@
+{
+  "id": "sarah_mitchell",
+  "name": "Captain Sarah \"Sky\" Mitchell",
+  "role": "airline_captain",
+  "location_types": ["commercial_airport", "cargo_hub"],
+  "specialties": ["Commercial Aviation", "Airline Operations", "Boeing 737", "Crew Resource Management"],
+  "personality_traits": ["Patient", "Encouraging", "Detail-oriented", "Safety-focused"],
+  "backstory": "A veteran airline captain with over 15,000 flight hours across multiple aircraft types. Captain Mitchell started as a flight instructor before joining a major airline, where she's risen through the ranks to captain Boeing 737s on domestic and international routes. Her passion for aviation education led her to become a check airman and mentor for new pilots.",
+  "teaching_style": "Uses real-world airline scenarios and emphasizes safety culture. Explains complex concepts through practical examples from commercial operations.",
+  "signature_phrases": [
+    "Safety is never an accident - it's always the result of preparation",
+    "In aviation, we don't just follow procedures, we understand why they exist",
+    "Every flight teaches you something new about aviation"
+  ],
+  "experience_years": 18,
+  "preferred_aircraft": ["Boeing 737", "Airbus A320", "Boeing 767"]
+}

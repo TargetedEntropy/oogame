@@ -1,0 +1,112 @@
+{
+  "locations": [
+    {
+      "id": "kord_chicago",
+      "name": "Chicago O'Hare International Airport",
+      "location_type": "commercial_airport",
+      "country": "United States",
+      "description": "one of the world's busiest airports serves as a major hub for commercial aviation with hundreds of daily flights.",
+      "primary_aircraft_types": ["JETS_COMMERCIAL"],
+      "coordinates": [41.9742, -87.9073]
+    },
+    {
+      "id": "ksea_seattle",
+      "name": "Seattle-Tacoma International Airport",
+      "location_type": "commercial_airport",
+      "country": "United States",
+      "description": "the primary airport serving the Pacific Northwest, known for its role in Boeing aircraft operations.",
+      "primary_aircraft_types": ["JETS_COMMERCIAL"],
+      "coordinates": [47.4502, -122.3088]
+    },
+    {
+      "id": "lake_union_seattle",
+      "name": "Lake Union Seaplane Base",
+      "location_type": "seaplane_base",
+      "country": "United States",
+      "description": "a picturesque seaplane base in downtown Seattle where floatplanes connect the city to remote destinations.",
+      "primary_aircraft_types": ["SEAPLANES_AMPHIBIANS"],
+      "coordinates": [47.6284, -122.3371]
+    },
+    {
+      "id": "edwards_afb",
+      "name": "Edwards Air Force Base",
+      "location_type": "military_base",
+      "country": "United States",
+      "description": "a legendary test facility where experimental aircraft push the boundaries of flight, including supersonic research.",
+      "primary_aircraft_types": ["JETS_MILITARY"],
+      "coordinates": [34.9054, -117.8839]
+    },
+    {
+      "id": "oshkosh_eaa",
+      "name": "EAA AirVenture Oshkosh",
+      "location_type": "vintage_airfield",
+      "country": "United States",
+      "description": "the world's greatest aviation celebration where vintage aircraft and experimental planes gather annually.",
+      "primary_aircraft_types": ["SINGLE_ENGINE_PROPS", "MULTI_ENGINE_PROPS"],
+      "coordinates": [43.9844, -88.5569]
+    },
+    {
+      "id": "cub_strip_alaska",
+      "name": "Remote Alaskan Airstrip",
+      "location_type": "general_aviation",
+      "country": "United States",
+      "description": "a remote gravel strip in the Alaskan wilderness where bush pilots connect isolated communities.",
+      "primary_aircraft_types": ["SINGLE_ENGINE_PROPS", "SEAPLANES_AMPHIBIANS"],
+      "coordinates": [64.0685, -152.2782]
+    },
+    {
+      "id": "embry_riddle",
+      "name": "Embry-Riddle Aeronautical University",
+      "location_type": "flight_training",
+      "country": "United States",
+      "description": "a premier aviation university where the next generation of pilots learn to fly in modern training aircraft.",
+      "primary_aircraft_types": ["SINGLE_ENGINE_PROPS", "MULTI_ENGINE_PROPS"],
+      "coordinates": [29.1895, -81.0495]
+    },
+    {
+      "id": "helicopter_ems",
+      "name": "MedStar Emergency Heliport",
+      "location_type": "helicopter_port",
+      "country": "United States",
+      "description": "a busy medical helicopter base where rotorcraft save lives through rapid emergency transport.",
+      "primary_aircraft_types": ["HELICOPTERS_ROTORCRAFT"],
+      "coordinates": [38.9072, -77.0369]
+    },
+    {
+      "id": "heathrow_london",
+      "name": "London Heathrow Airport",
+      "location_type": "commercial_airport",
+      "country": "United Kingdom",
+      "description": "one of Europe's busiest airports and a major international gateway with diverse aircraft operations.",
+      "primary_aircraft_types": ["JETS_COMMERCIAL"],
+      "coordinates": [51.4700, -0.4543]
+    },
+    {
+      "id": "duxford_airfield",
+      "name": "Imperial War Museum Duxford",
+      "location_type": "vintage_airfield",
+      "country": "United Kingdom",
+      "description": "a historic airfield preserving aviation heritage with operational WWII aircraft and classic warbirds.",
+      "primary_aircraft_types": ["SINGLE_ENGINE_PROPS", "MULTI_ENGINE_PROPS"],
+      "coordinates": [52.0908, 0.1319]
+    },
+    {
+      "id": "anchorage_cargo",
+      "name": "Ted Stevens Anchorage International Airport",
+      "location_type": "cargo_hub",
+      "country": "United States",
+      "description": "a crucial cargo hub where massive freighter aircraft connect Asia and North America.",
+      "primary_aircraft_types": ["JETS_COMMERCIAL"],
+      "coordinates": [61.1744, -149.9961]
+    },
+    {
+      "id": "float_plane_canada",
+      "name": "Wilderness Float Plane Base - Ontario",
+      "location_type": "seaplane_base",
+      "country": "Canada",
+      "description": "a remote float plane base serving fishing lodges and wilderness camps across pristine Canadian lakes.",
+      "primary_aircraft_types": ["SEAPLANES_AMPHIBIANS"],
+      "coordinates": [49.6767, -91.7014]
+    }
+  ]
+}

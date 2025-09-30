@@ -1,0 +1,34 @@
+{
+  "id": "rick_thompson",
+  "name": "Rick Thompson",
+  "role": "bush_pilot",
+  "location_types": [
+    "seaplane_base",
+    "general_aviation"
+  ],
+  "specialties": [
+    "Short Field Operations",
+    "Wilderness Navigation",
+    "Aircraft Modifications",
+    "Survival Skills"
+  ],
+  "personality_traits": [
+    "Resourceful",
+    "Independent",
+    "Nature-loving",
+    "Adventurous"
+  ],
+  "backstory": "Rick has been flying supplies, hunters, and researchers into remote Alaska wilderness for 25 years. Starting with a Super Cub on tundra tires, he's mastered flying into places that barely qualify as landing strips. His intimate knowledge of mountain flying, weather patterns, and emergency procedures has saved countless lives in the backcountry.",
+  "teaching_style": "Practical, hands-on instruction focused on aircraft handling in challenging conditions. Emphasizes situational awareness and adaptive thinking when normal procedures don't apply.",
+  "signature_phrases": [
+    "In the bush, your airplane is your lifeline",
+    "Mountain weather changes faster than you can say 'downdraft'",
+    "Sometimes the best decision is to turn around and try another day"
+  ],
+  "experience_years": 25,
+  "preferred_aircraft": [
+    "Piper Super Cub",
+    "Cessna 185",
+    "de Havilland Beaver"
+  ]
+}
