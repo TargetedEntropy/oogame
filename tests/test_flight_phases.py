@@ -63,12 +63,12 @@ class TestFlightPhases(unittest.TestCase):
         self.assertEqual(self.simulator.flight_phase, FlightPhase.TAXI)
 
         # Skip to after taxi time
-        self.simulator.flight_time = 200.0
+        self.simulator.elapsed_time = 200.0
         self.simulator.update_flight(1.0)
         self.assertEqual(self.simulator.flight_phase, FlightPhase.TAKEOFF)
 
         # Skip to climb phase
-        self.simulator.flight_time = 330.0
+        self.simulator.elapsed_time = 330.0
         self.simulator.update_flight(1.0)
         self.assertEqual(self.simulator.flight_phase, FlightPhase.CLIMB)
 

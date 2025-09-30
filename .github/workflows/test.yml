@@ -72,12 +72,10 @@ jobs:
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         sleep 3
 
-        # Run core flight simulator tests (known to work)
-        echo "Running core flight simulator tests..."
+        # Run comprehensive flight simulator tests for maximum coverage
+        echo "Running comprehensive flight simulator tests..."
         python -m pytest \
-          tests/test_flight_simulator_core.py \
-          tests/test_flight_mechanics.py \
-          tests/test_flight_systems.py \
+          tests/test_flight_simulator.py \
           --cov=core.flight_simulator \
           --cov-report=xml \
           --cov-report=html \
