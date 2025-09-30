@@ -117,15 +117,6 @@ pygame/
 └── requirements.txt        # Python dependencies
 ```
 
-## Code Improvements with pygame_gui
-
-The refactoring with pygame_gui and pygame-menu achieved:
-- **~60% reduction** in UI code complexity
-- **~70% reduction** in menu code
-- Automatic handling of scrolling, text wrapping, and input
-- Professional appearance with theming support
-- Better event handling and responsiveness
-
 ## Troubleshooting
 
 ### Ollama not connecting:

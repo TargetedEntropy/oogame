@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from core.npc_system import Location, npc_manager
 
+
 class FlightPhase(Enum):
     PREFLIGHT = "preflight"
     TAXI = "taxi"
@@ -18,12 +19,14 @@ class FlightPhase(Enum):
     TAXI_TO_GATE = "taxi_to_gate"
     COMPLETED = "completed"
 
+
 class WeatherCondition(Enum):
     CLEAR = "clear"
     LIGHT_WIND = "light_wind"
     MODERATE_WIND = "moderate_wind"
     TURBULENCE = "turbulence"
     RAIN = "rain"
+
 
 @dataclass
 class FlightPlan:
@@ -36,6 +39,7 @@ class FlightPlan:
     cruise_speed: int  # Knots
     fuel_required: float  # Gallons
 
+
 @dataclass
 class WeatherData:
     condition: WeatherCondition
@@ -44,6 +48,7 @@ class WeatherData:
     crosswind_component: float
     visibility: int  # Miles
     temperature: int  # Fahrenheit
+
 
 class FlightSimulator:
     def __init__(self):
@@ -102,20 +107,30 @@ class FlightSimulator:
             wind_speed=wind_speed,
             crosswind_component=crosswind,
             visibility=random.randint(3, 10),
-            temperature=random.randint(32, 85)
+            temperature=random.randint(32, 85),
         )
 
-    def calculate_flight_plan(self, departure: Location, destination: Location, aircraft_type: str) -> FlightPlan:
+    def calculate_flight_plan(
+        self, departure: Location, destination: Location, aircraft_type: str
+    ) -> FlightPlan:
         """Calculate flight plan between two airports."""
         # Calculate great circle distance
-        lat1, lng1 = math.radians(departure.coordinates[0]), math.radians(departure.coordinates[1])
-        lat2, lng2 = math.radians(destination.coordinates[0]), math.radians(destination.coordinates[1])
+        lat1, lng1 = (
+            math.radians(departure.coordinates[0]),
+            math.radians(departure.coordinates[1]),
+        )
+        lat2, lng2 = (
+            math.radians(destination.coordinates[0]),
+            math.radians(destination.coordinates[1]),
+        )
 
         dlat = lat2 - lat1
         dlng = lng2 - lng1
 
-        a = (math.sin(dlat/2)**2 +
-             math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2)
+        a = (
+            math.sin(dlat / 2) ** 2
+            + math.cos(lat1) * math.cos(lat2) * math.sin(dlng / 2) ** 2
+        )
         c = 2 * math.asin(math.sqrt(a))
 
         # Distance in nautical miles (Earth radius ≈ 3440 nm)
@@ -125,7 +140,7 @@ class FlightSimulator:
         aircraft_specs = self._get_aircraft_specs(aircraft_type)
 
         # Calculate flight time
-        estimated_minutes = int((distance_nm / aircraft_specs['cruise_speed']) * 60)
+        estimated_minutes = int((distance_nm / aircraft_specs["cruise_speed"]) * 60)
 
         # Add time for taxi, takeoff, climb, descent, landing
         estimated_minutes += 20  # 20 minutes for airport operations
@@ -136,9 +151,9 @@ class FlightSimulator:
             aircraft_type=aircraft_type,
             distance_nm=distance_nm,
             estimated_time_minutes=estimated_minutes,
-            cruise_altitude=aircraft_specs['cruise_altitude'],
-            cruise_speed=aircraft_specs['cruise_speed'],
-            fuel_required=distance_nm * aircraft_specs['fuel_consumption']
+            cruise_altitude=aircraft_specs["cruise_altitude"],
+            cruise_speed=aircraft_specs["cruise_speed"],
+            fuel_required=distance_nm * aircraft_specs["fuel_consumption"],
         )
 
     def _get_aircraft_specs(self, aircraft_type: str) -> Dict:
@@ -148,38 +163,38 @@ class FlightSimulator:
                 "cruise_speed": 120,  # knots
                 "cruise_altitude": 6500,  # feet
                 "fuel_consumption": 1.2,  # gallons per nm
-                "drift_sensitivity": 1.0  # Reduced from 2.0
+                "drift_sensitivity": 1.0,  # Reduced from 2.0
             },
             "MULTI_ENGINE_PROPS": {
                 "cruise_speed": 180,
                 "cruise_altitude": 12000,
                 "fuel_consumption": 2.5,
-                "drift_sensitivity": 0.8  # Reduced from 1.5
+                "drift_sensitivity": 0.8,  # Reduced from 1.5
             },
             "JETS_COMMERCIAL": {
                 "cruise_speed": 450,
                 "cruise_altitude": 35000,
                 "fuel_consumption": 8.0,
-                "drift_sensitivity": 0.5  # Reduced from 0.8
+                "drift_sensitivity": 0.5,  # Reduced from 0.8
             },
             "JETS_MILITARY": {
                 "cruise_speed": 500,
                 "cruise_altitude": 40000,
                 "fuel_consumption": 12.0,
-                "drift_sensitivity": 0.3  # Reduced from 0.5
+                "drift_sensitivity": 0.3,  # Reduced from 0.5
             },
             "SEAPLANES_AMPHIBIANS": {
                 "cruise_speed": 140,
                 "cruise_altitude": 8000,
                 "fuel_consumption": 1.8,
-                "drift_sensitivity": 1.2  # Reduced from 2.5
+                "drift_sensitivity": 1.2,  # Reduced from 2.5
             },
             "HELICOPTERS_ROTORCRAFT": {
                 "cruise_speed": 100,
                 "cruise_altitude": 1500,
                 "fuel_consumption": 2.0,
-                "drift_sensitivity": 1.5  # Reduced from 3.0
-            }
+                "drift_sensitivity": 1.5,  # Reduced from 3.0
+            },
         }
         return specs.get(aircraft_type, specs["SINGLE_ENGINE_PROPS"])
 
@@ -195,7 +210,9 @@ class FlightSimulator:
         self.elapsed_time = 0.0
 
         # Initialize aircraft state
-        self.altitude = flight_plan.departure.coordinates[0] * 100  # Rough field elevation
+        self.altitude = (
+            flight_plan.departure.coordinates[0] * 100
+        )  # Rough field elevation
         self.airspeed = 0
         self.heading = self._calculate_initial_heading()
         self.target_heading = self.heading
@@ -209,7 +226,9 @@ class FlightSimulator:
 
         # Initialize drift mechanics - MUCH MORE REASONABLE!
         aircraft_specs = self._get_aircraft_specs(flight_plan.aircraft_type)
-        self.drift_rate = random.uniform(0.1, 0.3) * aircraft_specs['drift_sensitivity']  # Reduced from 0.5-2.0
+        self.drift_rate = (
+            random.uniform(0.1, 0.3) * aircraft_specs["drift_sensitivity"]
+        )  # Reduced from 0.5-2.0
         self.current_weather = self._generate_weather()
 
         # Reset tracking
@@ -234,8 +253,9 @@ class FlightSimulator:
         dlng = lng2 - lng1
 
         y = math.sin(dlng) * math.cos(lat2)
-        x = (math.cos(lat1) * math.sin(lat2) -
-             math.sin(lat1) * math.cos(lat2) * math.cos(dlng))
+        x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(
+            lat2
+        ) * math.cos(dlng)
 
         heading = math.atan2(y, x)
         heading = math.degrees(heading)
@@ -333,11 +353,17 @@ class FlightSimulator:
     def _apply_drift_mechanics(self, dt: float):
         """Apply Desert Bus style drift mechanics - BALANCED VERSION."""
         # NO DRIFT during taxi, takeoff, or landing phases
-        if self.flight_phase in [FlightPhase.TAXI, FlightPhase.TAKEOFF, FlightPhase.LANDING]:
+        if self.flight_phase in [
+            FlightPhase.TAXI,
+            FlightPhase.TAKEOFF,
+            FlightPhase.LANDING,
+        ]:
             return
 
         # Base drift rate - reduced when autopilot is active
-        drift_multiplier = 0.3 if self.autopilot_enabled else 0.5  # Autopilot reduces drift effect
+        drift_multiplier = (
+            0.3 if self.autopilot_enabled else 0.5
+        )  # Autopilot reduces drift effect
         base_drift = self.drift_rate * dt * drift_multiplier
 
         # Wind effect - also reduced with autopilot
@@ -364,10 +390,12 @@ class FlightSimulator:
                 self.course_deviations += 1
                 # Only add alerts if we haven't warned recently
                 current_time = time.time()
-                if not hasattr(self, 'last_alert_time'):
+                if not hasattr(self, "last_alert_time"):
                     self.last_alert_time = 0
 
-                if current_time - self.last_alert_time > 10:  # Only warn every 10 seconds
+                if (
+                    current_time - self.last_alert_time > 10
+                ):  # Only warn every 10 seconds
                     if not self.autopilot_enabled:
                         self.system_alerts.append("Course deviation warning")
                     else:
@@ -396,7 +424,11 @@ class FlightSimulator:
 
         # Simple position update (not accounting for earth curvature)
         lat_change = distance * math.cos(heading_rad) / 60  # 60 nm per degree
-        lng_change = distance * math.sin(heading_rad) / (60 * math.cos(math.radians(self.current_lat)))
+        lng_change = (
+            distance
+            * math.sin(heading_rad)
+            / (60 * math.cos(math.radians(self.current_lat)))
+        )
 
         self.current_lat += lat_change
         self.current_lng += lng_change
@@ -407,16 +439,22 @@ class FlightSimulator:
         dest_lat, dest_lng = self.current_flight.destination.coordinates
 
         # Distance from departure
-        dist_from_dep = self._calculate_distance(dep_lat, dep_lng, self.current_lat, self.current_lng)
+        dist_from_dep = self._calculate_distance(
+            dep_lat, dep_lng, self.current_lat, self.current_lng
+        )
         self.progress_percent = min(100, (dist_from_dep / total_distance) * 100)
 
-    def _calculate_distance(self, lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    def _calculate_distance(
+        self, lat1: float, lng1: float, lat2: float, lng2: float
+    ) -> float:
         """Calculate distance in nautical miles between two points."""
         lat1, lng1, lat2, lng2 = map(math.radians, [lat1, lng1, lat2, lng2])
         dlat = lat2 - lat1
         dlng = lng2 - lng1
-        a = (math.sin(dlat/2)**2 +
-             math.cos(lat1) * math.cos(lat2) * math.sin(dlng/2)**2)
+        a = (
+            math.sin(dlat / 2) ** 2
+            + math.cos(lat1) * math.cos(lat2) * math.sin(dlng / 2) ** 2
+        )
         c = 2 * math.asin(math.sqrt(a))
         return 3440 * c  # Earth radius in nautical miles
 
@@ -498,7 +536,12 @@ class FlightSimulator:
 
         # NO AUTOPILOT HEADING CORRECTIONS during taxi, takeoff, or landing
         # Only apply heading control during climb, cruise, descent, and approach
-        if self.flight_phase in [FlightPhase.CLIMB, FlightPhase.CRUISE, FlightPhase.DESCENT, FlightPhase.APPROACH]:
+        if self.flight_phase in [
+            FlightPhase.CLIMB,
+            FlightPhase.CRUISE,
+            FlightPhase.DESCENT,
+            FlightPhase.APPROACH,
+        ]:
             # === HEADING CONTROL ===
             heading_error = self.target_heading - self.heading
             if heading_error > 180:
@@ -538,7 +581,9 @@ class FlightSimulator:
         # Adjust speed based on engine temperature
         if temp_error > 20:  # Engine too hot
             target_speed = base_speed * 0.85  # Reduce speed significantly
-            if len(self.system_alerts) == 0 or "Autopilot reducing speed" not in str(self.system_alerts[-5:]):
+            if len(self.system_alerts) == 0 or "Autopilot reducing speed" not in str(
+                self.system_alerts[-5:]
+            ):
                 self.system_alerts.append("Autopilot reducing speed for cooling")
         elif temp_error > 10:  # Engine warm
             target_speed = base_speed * 0.92  # Reduce speed moderately
@@ -563,7 +608,9 @@ class FlightSimulator:
 
             # Set reasonable speed limits based on phase
             if self.flight_phase == FlightPhase.CRUISE:
-                new_speed = max(80, min(new_speed, self.current_flight.cruise_speed * 1.1))
+                new_speed = max(
+                    80, min(new_speed, self.current_flight.cruise_speed * 1.1)
+                )
             elif self.flight_phase == FlightPhase.CLIMB:
                 new_speed = max(70, min(new_speed, 120))
             elif self.flight_phase == FlightPhase.DESCENT:
@@ -576,30 +623,30 @@ class FlightSimulator:
     def _get_status(self) -> Dict:
         """Get current flight status."""
         return {
-            'is_flying': self.is_flying,
-            'flight_phase': self.flight_phase.value if self.flight_phase else None,
-            'elapsed_time': self.elapsed_time,
-            'progress_percent': self.progress_percent,
-            'altitude': int(self.altitude),
-            'airspeed': int(self.airspeed),
-            'heading': int(self.heading),
-            'target_heading': int(self.target_heading),
-            'engine_temp': int(self.engine_temp),
-            'fuel_remaining': self.fuel_remaining,
-            'off_course_distance': self.off_course_distance,
-            'system_alerts': self.system_alerts.copy(),
-            'emergency_state': self.emergency_state,
-            'weather': {
-                'condition': self.current_weather.condition.value,
-                'wind_direction': self.current_weather.wind_direction,
-                'wind_speed': self.current_weather.wind_speed,
-                'visibility': self.current_weather.visibility
+            "is_flying": self.is_flying,
+            "flight_phase": self.flight_phase.value if self.flight_phase else None,
+            "elapsed_time": self.elapsed_time,
+            "progress_percent": self.progress_percent,
+            "altitude": int(self.altitude),
+            "airspeed": int(self.airspeed),
+            "heading": int(self.heading),
+            "target_heading": int(self.target_heading),
+            "engine_temp": int(self.engine_temp),
+            "fuel_remaining": self.fuel_remaining,
+            "off_course_distance": self.off_course_distance,
+            "system_alerts": self.system_alerts.copy(),
+            "emergency_state": self.emergency_state,
+            "weather": {
+                "condition": self.current_weather.condition.value,
+                "wind_direction": self.current_weather.wind_direction,
+                "wind_speed": self.current_weather.wind_speed,
+                "visibility": self.current_weather.visibility,
             },
-            'performance': {
-                'course_deviations': self.course_deviations,
-                'alerts_count': self.system_alerts_count,
-                'fuel_efficiency': self.fuel_efficiency
-            }
+            "performance": {
+                "course_deviations": self.course_deviations,
+                "alerts_count": self.system_alerts_count,
+                "fuel_efficiency": self.fuel_efficiency,
+            },
         }
 
     def end_flight(self) -> Dict:
@@ -608,19 +655,20 @@ class FlightSimulator:
             return {}
 
         performance = {
-            'completed': self.flight_phase == FlightPhase.COMPLETED,
-            'flight_time': self.elapsed_time,
-            'course_deviations': self.course_deviations,
-            'system_alerts': self.system_alerts_count,
-            'fuel_efficiency': self.fuel_efficiency,
-            'emergency_landing': self.emergency_state,
-            'final_progress': self.progress_percent
+            "completed": self.flight_phase == FlightPhase.COMPLETED,
+            "flight_time": self.elapsed_time,
+            "course_deviations": self.course_deviations,
+            "system_alerts": self.system_alerts_count,
+            "fuel_efficiency": self.fuel_efficiency,
+            "emergency_landing": self.emergency_state,
+            "final_progress": self.progress_percent,
         }
 
         self.is_flying = False
         self.current_flight = None
 
         return performance
+
 
 # Global flight simulator instance
 flight_simulator = FlightSimulator()

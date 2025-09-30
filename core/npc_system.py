@@ -5,6 +5,7 @@ import json
 import random
 from pathlib import Path
 
+
 class LocationType(Enum):
     GENERAL_AVIATION = "general_aviation"
     COMMERCIAL_AIRPORT = "commercial_airport"
@@ -14,6 +15,7 @@ class LocationType(Enum):
     FLIGHT_TRAINING = "flight_training"
     CARGO_HUB = "cargo_hub"
     VINTAGE_AIRFIELD = "vintage_airfield"
+
 
 class NPCRole(Enum):
     PILOT = "pilot"
@@ -27,6 +29,7 @@ class NPCRole(Enum):
     TEST_PILOT = "test_pilot"
     VINTAGE_ENTHUSIAST = "vintage_enthusiast"
 
+
 @dataclass
 class Location:
     id: str
@@ -36,6 +39,7 @@ class Location:
     description: str
     primary_aircraft_types: List[str]
     coordinates: tuple  # (lat, lng)
+
 
 class NPC:
     def __init__(self, npc_data: Dict):
@@ -62,6 +66,7 @@ class NPC:
         """Check if NPC is suitable for this location type."""
         return location_type in self.location_types
 
+
 class NPCManager:
     def __init__(self):
         self.npcs: List[NPC] = []
@@ -79,7 +84,7 @@ class NPCManager:
         if npc_dir.exists():
             for npc_file in npc_dir.glob("*.json"):
                 try:
-                    with open(npc_file, 'r') as f:
+                    with open(npc_file, "r") as f:
                         npc_data = json.load(f)
                         self.npcs.append(NPC(npc_data))
                 except Exception as e:
@@ -90,7 +95,7 @@ class NPCManager:
         locations_file = Path("data/locations.json")
         if locations_file.exists():
             try:
-                with open(locations_file, 'r') as f:
+                with open(locations_file, "r") as f:
                     locations_data = json.load(f)
                     for loc_data in locations_data["locations"]:
                         location = Location(
@@ -100,7 +105,7 @@ class NPCManager:
                             country=loc_data["country"],
                             description=loc_data["description"],
                             primary_aircraft_types=loc_data["primary_aircraft_types"],
-                            coordinates=tuple(loc_data["coordinates"])
+                            coordinates=tuple(loc_data["coordinates"]),
                         )
                         self.locations.append(location)
             except Exception as e:
@@ -108,10 +113,15 @@ class NPCManager:
 
     def get_suitable_npcs(self, location: Location) -> List[NPC]:
         """Get NPCs suitable for a specific location."""
-        return [npc for npc in self.npcs
-                if npc.is_suitable_for_location(location.location_type)]
+        return [
+            npc
+            for npc in self.npcs
+            if npc.is_suitable_for_location(location.location_type)
+        ]
 
-    def select_npc_for_location(self, location: Location, prefer_new: bool = True) -> Optional[NPC]:
+    def select_npc_for_location(
+        self, location: Location, prefer_new: bool = True
+    ) -> Optional[NPC]:
         """Select an appropriate NPC for the location."""
         suitable_npcs = self.get_suitable_npcs(location)
 
@@ -120,7 +130,9 @@ class NPCManager:
 
         if prefer_new:
             # Try to find unvisited NPCs first
-            unvisited = [npc for npc in suitable_npcs if npc.id not in self.visited_npcs]
+            unvisited = [
+                npc for npc in suitable_npcs if npc.id not in self.visited_npcs
+            ]
             if unvisited:
                 suitable_npcs = unvisited
 
@@ -130,7 +142,9 @@ class NPCManager:
 
         return selected_npc
 
-    def travel_to_location(self, location_id: str) -> tuple[Optional[Location], Optional[NPC]]:
+    def travel_to_location(
+        self, location_id: str
+    ) -> tuple[Optional[Location], Optional[NPC]]:
         """Travel to a location and select an NPC."""
         location = next((loc for loc in self.locations if loc.id == location_id), None)
         if not location:
@@ -143,11 +157,15 @@ class NPCManager:
 
         return location, npc
 
-    def get_random_location(self, location_type: Optional[LocationType] = None) -> Optional[Location]:
+    def get_random_location(
+        self, location_type: Optional[LocationType] = None
+    ) -> Optional[Location]:
         """Get a random location, optionally filtered by type."""
         candidates = self.locations
         if location_type:
-            candidates = [loc for loc in self.locations if loc.location_type == location_type]
+            candidates = [
+                loc for loc in self.locations if loc.location_type == location_type
+            ]
 
         return random.choice(candidates) if candidates else None
 
@@ -164,8 +182,11 @@ class NPCManager:
 
     def get_travel_options(self, count: int = 5) -> List[Location]:
         """Get random travel options for the player."""
-        available_locations = [loc for loc in self.locations if loc != self.current_location]
+        available_locations = [
+            loc for loc in self.locations if loc != self.current_location
+        ]
         return random.sample(available_locations, min(count, len(available_locations)))
+
 
 # Global instance
 npc_manager = NPCManager()

@@ -94,33 +94,32 @@ class Conversation:
             other_msgs = [m for m in self.state.messages if m.role != "system"]
 
             # Keep most recent messages
-            trimmed = system_msgs + other_msgs[-(self.max_history - len(system_msgs)):]
+            trimmed = system_msgs + other_msgs[-(self.max_history - len(system_msgs)) :]
             self.state.messages = trimmed
 
     def process_response(self, response: str) -> Optional[ConversationSignal]:
         """Process LLM response and extract signal if present."""
         try:
             # Try to extract JSON from response
-            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            json_match = re.search(r"\{.*\}", response, re.DOTALL)
             if json_match:
                 json_str = json_match.group()
                 data = json.loads(json_str)
 
-                if 'signal' in data:
-                    signal_data = data['signal']
-                    signal_type_str = signal_data.get('type', '')
+                if "signal" in data:
+                    signal_data = data["signal"]
+                    signal_type_str = signal_data.get("type", "")
 
                     # Convert string to SignalType enum
                     for signal_type in SignalType:
                         if signal_type.value == signal_type_str:
                             return ConversationSignal(
-                                type=signal_type,
-                                data=signal_data.get('data', {})
+                                type=signal_type, data=signal_data.get("data", {})
                             )
 
                 # Return the message content
-                if 'message' in data:
-                    return data['message']
+                if "message" in data:
+                    return data["message"]
 
         except (json.JSONDecodeError, KeyError) as e:
             # If not valid JSON or missing expected fields, treat as plain text
@@ -130,24 +129,23 @@ class Conversation:
 
     def format_message_for_display(self, message: Message) -> str:
         """Format a message for display with role indicators."""
-        role_colors = {
-            "user": "[You]",
-            "assistant": "[ML Tutor]",
-            "system": "[System]"
-        }
+        role_colors = {"user": "[You]", "assistant": "[ML Tutor]", "system": "[System]"}
 
         prefix = role_colors.get(message.role, f"[{message.role}]")
         return f"{prefix} {message.content}"
 
     def get_conversation_history(self) -> List[str]:
         """Get formatted conversation history for display."""
-        return [self.format_message_for_display(msg) for msg in self.state.messages
-                if msg.role != "system"]
+        return [
+            self.format_message_for_display(msg)
+            for msg in self.state.messages
+            if msg.role != "system"
+        ]
 
     def update_progress(self, signal: ConversationSignal):
         """Update progress based on signal type."""
         if signal.type == SignalType.TOPIC_COMPLETED:
-            topic = signal.data.get('topic_name', '')
+            topic = signal.data.get("topic_name", "")
             if topic and topic not in self.state.completed_topics:
                 self.state.completed_topics.append(topic)
 
@@ -164,7 +162,7 @@ class Conversation:
             "completed_topics": len(self.state.completed_topics),
             "assessments": self.state.assessment_count,
             "checkpoints": self.state.checkpoint_count,
-            "current_topic": self.state.current_topic
+            "current_topic": self.state.current_topic,
         }
 
     async def generate_response(self, user_input: str) -> str:
@@ -186,12 +184,10 @@ class Conversation:
             def get_full_response():
                 parts = []
                 for chunk in self.ollama_service.chat(
-                    model=model,
-                    messages=self.state.messages,
-                    stream=True
+                    model=model, messages=self.state.messages, stream=True
                 ):
                     parts.append(chunk)
-                return ''.join(parts)
+                return "".join(parts)
 
             # Run the blocking operation in a thread pool
             loop = asyncio.get_event_loop()
@@ -205,7 +201,7 @@ class Conversation:
                 self.emit_signal(processed)
                 self.update_progress(processed)
                 # Extract message from signal data if available
-                message = processed.data.get('message', full_response)
+                message = processed.data.get("message", full_response)
             else:
                 message = processed if isinstance(processed, str) else full_response
 

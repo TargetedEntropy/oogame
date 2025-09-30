@@ -13,58 +13,60 @@ class ConversationUI:
         # Create UI manager with theme
         self.manager = pygame_gui.UIManager(
             (self.width, self.height),
-            theme_path=None  # Can add custom theme JSON later
+            theme_path=None,  # Can add custom theme JSON later
         )
 
         # Set up custom theme colors
-        self.manager.get_theme().load_theme({
-            "colours": {
-                "dark_bg": "#1E1E28",
-                "normal_bg": "#2D2D3C",
-                "hovered_bg": "#3D3D4C",
-                "disabled_bg": "#202028",
-                "selected_bg": "#4A4A5A",
-                "active_bg": "#5A5A6A",
-                "normal_text": "#DCDCE6",
-                "hovered_text": "#FFFFFF",
-                "disabled_text": "#808080",
-                "selected_text": "#FFFFFF",
-                "active_text": "#FFFFFF",
-                "normal_border": "#646478",
-                "hovered_border": "#8888A0",
-                "disabled_border": "#404040",
-                "selected_border": "#9696FA",
-                "active_border": "#AAAAFF"
+        self.manager.get_theme().load_theme(
+            {
+                "colours": {
+                    "dark_bg": "#1E1E28",
+                    "normal_bg": "#2D2D3C",
+                    "hovered_bg": "#3D3D4C",
+                    "disabled_bg": "#202028",
+                    "selected_bg": "#4A4A5A",
+                    "active_bg": "#5A5A6A",
+                    "normal_text": "#DCDCE6",
+                    "hovered_text": "#FFFFFF",
+                    "disabled_text": "#808080",
+                    "selected_text": "#FFFFFF",
+                    "active_text": "#FFFFFF",
+                    "normal_border": "#646478",
+                    "hovered_border": "#8888A0",
+                    "disabled_border": "#404040",
+                    "selected_border": "#9696FA",
+                    "active_border": "#AAAAFF",
+                }
             }
-        })
+        )
 
         # Create conversation display (scrollable text box)
         self.conversation_box = pygame_gui.elements.UITextBox(
             html_text="<b>Aircraft Education Session</b><br><br>Press SPACE in the menu to start learning!",
             relative_rect=pygame.Rect(20, 20, self.width - 40, self.height - 200),
             manager=self.manager,
-            wrap_to_height=False
+            wrap_to_height=False,
         )
 
         # Create input field
         self.input_field = pygame_gui.elements.UITextEntryLine(
             relative_rect=pygame.Rect(20, self.height - 160, self.width - 160, 40),
             manager=self.manager,
-            placeholder_text="Type your message here..."
+            placeholder_text="Type your message here...",
         )
 
         # Create send button
         self.send_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(self.width - 120, self.height - 160, 100, 40),
             text="Send",
-            manager=self.manager
+            manager=self.manager,
         )
 
         # Create progress panel
         self.progress_panel = pygame_gui.elements.UIPanel(
             relative_rect=pygame.Rect(20, self.height - 100, self.width - 40, 80),
             starting_height=1,
-            manager=self.manager
+            manager=self.manager,
         )
 
         # Progress labels
@@ -72,14 +74,14 @@ class ConversationUI:
             relative_rect=pygame.Rect(10, 10, self.width - 60, 30),
             text="Progress: Sessions: 0 | Topics: 0 | Assessments: 0 | Checkpoints: 0",
             manager=self.manager,
-            container=self.progress_panel
+            container=self.progress_panel,
         )
 
         self.subject_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(10, 40, self.width - 60, 30),
             text="Subject: Single-Engine Propeller Aircraft",
             manager=self.manager,
-            container=self.progress_panel
+            container=self.progress_panel,
         )
 
         # Store conversation HTML
@@ -91,7 +93,7 @@ class ConversationUI:
             "sessions": 0,
             "topics": 0,
             "assessments": 0,
-            "checkpoints": 0
+            "checkpoints": 0,
         }
 
     def add_message(self, role: str, content: str):
@@ -111,7 +113,7 @@ class ConversationUI:
 
         # Limit message history
         if len(self.conversation_html) > self.max_messages:
-            self.conversation_html = self.conversation_html[-self.max_messages:]
+            self.conversation_html = self.conversation_html[-self.max_messages :]
 
         # Update text box
         html_content = "<br><br>".join(self.conversation_html)
@@ -122,11 +124,13 @@ class ConversationUI:
 
     def _escape_html(self, text: str) -> str:
         """Escape HTML special characters."""
-        return (text.replace("&", "&amp;")
-                   .replace("<", "&lt;")
-                   .replace(">", "&gt;")
-                   .replace('"', "&quot;")
-                   .replace("'", "&#x27;"))
+        return (
+            text.replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace('"', "&quot;")
+            .replace("'", "&#x27;")
+        )
 
     def handle_event(self, event: pygame.event.Event) -> Optional[str]:
         """Handle pygame events and return user input if submitted."""
@@ -160,10 +164,12 @@ class ConversationUI:
     def update_progress(self, progress_data: dict):
         """Update progress display."""
         self.progress_data.update(progress_data)
-        progress_text = (f"Progress: Sessions: {self.progress_data['sessions']} | "
-                        f"Topics: {self.progress_data['topics']} | "
-                        f"Assessments: {self.progress_data['assessments']} | "
-                        f"Checkpoints: {self.progress_data['checkpoints']}")
+        progress_text = (
+            f"Progress: Sessions: {self.progress_data['sessions']} | "
+            f"Topics: {self.progress_data['topics']} | "
+            f"Assessments: {self.progress_data['assessments']} | "
+            f"Checkpoints: {self.progress_data['checkpoints']}"
+        )
         self.progress_label.set_text(progress_text)
 
     def update_subject(self, subject_name: str):

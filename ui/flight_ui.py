@@ -4,6 +4,7 @@ import math
 from typing import Dict, Optional
 from core.flight_simulator import flight_simulator, FlightPhase
 
+
 class FlightUI:
     def __init__(self, screen: pygame.Surface):
         self.screen = screen
@@ -31,7 +32,9 @@ class FlightUI:
         self.info_panel_rect = pygame.Rect(20, 240, 300, self.height - 260)
         self.alerts_panel_rect = pygame.Rect(340, 240, 300, 200)
         self.progress_panel_rect = pygame.Rect(660, 240, self.width - 680, 200)
-        self.education_panel_rect = pygame.Rect(20, 460, self.width - 40, self.height - 480)
+        self.education_panel_rect = pygame.Rect(
+            20, 460, self.width - 40, self.height - 480
+        )
 
         # Control states
         self.keys_pressed = set()
@@ -53,42 +56,42 @@ class FlightUI:
         # Course correction buttons
         button_y = self.height - 100
 
-        self.correction_buttons['left_5'] = pygame_gui.elements.UIButton(
+        self.correction_buttons["left_5"] = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(50, button_y, 80, 30),
-            text='← 5°',
-            manager=self.ui_manager
+            text="← 5°",
+            manager=self.ui_manager,
         )
 
-        self.correction_buttons['left_1'] = pygame_gui.elements.UIButton(
+        self.correction_buttons["left_1"] = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(140, button_y, 60, 30),
-            text='← 1°',
-            manager=self.ui_manager
+            text="← 1°",
+            manager=self.ui_manager,
         )
 
-        self.correction_buttons['right_1'] = pygame_gui.elements.UIButton(
+        self.correction_buttons["right_1"] = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(210, button_y, 60, 30),
-            text='1° →',
-            manager=self.ui_manager
+            text="1° →",
+            manager=self.ui_manager,
         )
 
-        self.correction_buttons['right_5'] = pygame_gui.elements.UIButton(
+        self.correction_buttons["right_5"] = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(280, button_y, 80, 30),
-            text='5° →',
-            manager=self.ui_manager
+            text="5° →",
+            manager=self.ui_manager,
         )
 
         # Autopilot toggle
         self.autopilot_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(400, button_y, 100, 30),
-            text='Autopilot',
-            manager=self.ui_manager
+            text="Autopilot",
+            manager=self.ui_manager,
         )
 
         # End flight button
         self.end_flight_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(self.width - 150, button_y, 120, 30),
-            text='End Flight',
-            manager=self.ui_manager
+            text="End Flight",
+            manager=self.ui_manager,
         )
 
     def handle_event(self, event) -> Optional[str]:
@@ -97,16 +100,16 @@ class FlightUI:
 
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                if event.ui_element == self.correction_buttons['left_5']:
+                if event.ui_element == self.correction_buttons["left_5"]:
                     flight_simulator.apply_course_correction(-5)
                     return "course_correction"
-                elif event.ui_element == self.correction_buttons['left_1']:
+                elif event.ui_element == self.correction_buttons["left_1"]:
                     flight_simulator.apply_course_correction(-1)
                     return "course_correction"
-                elif event.ui_element == self.correction_buttons['right_1']:
+                elif event.ui_element == self.correction_buttons["right_1"]:
                     flight_simulator.apply_course_correction(1)
                     return "course_correction"
-                elif event.ui_element == self.correction_buttons['right_5']:
+                elif event.ui_element == self.correction_buttons["right_5"]:
                     flight_simulator.apply_course_correction(5)
                     return "course_correction"
                 elif event.ui_element == self.autopilot_button:
@@ -156,7 +159,7 @@ class FlightUI:
         # Get current flight status
         status = flight_simulator._get_status()
 
-        if not status['is_flying']:
+        if not status["is_flying"]:
             self._draw_no_flight_message()
             return
 
@@ -179,8 +182,12 @@ class FlightUI:
         text_rect = text.get_rect(center=(self.width // 2, self.height // 2))
         self.screen.blit(text, text_rect)
 
-        instruction = self.font.render("Use 'Travel to Airport' to start a flight", True, self.text_color)
-        inst_rect = instruction.get_rect(center=(self.width // 2, self.height // 2 + 40))
+        instruction = self.font.render(
+            "Use 'Travel to Airport' to start a flight", True, self.text_color
+        )
+        inst_rect = instruction.get_rect(
+            center=(self.width // 2, self.height // 2 + 40)
+        )
         self.screen.blit(instruction, inst_rect)
 
     def _draw_primary_instruments(self, status: Dict):
@@ -191,11 +198,11 @@ class FlightUI:
 
         # Instrument positions
         instruments = [
-            ('ALTITUDE', status['altitude'], 'ft', (80, 80)),
-            ('AIRSPEED', status['airspeed'], 'kts', (220, 80)),
-            ('HEADING', status['heading'], '°', (360, 80)),
-            ('ENGINE TEMP', status['engine_temp'], '°F', (500, 80)),
-            ('FUEL', f"{status['fuel_remaining']:.1f}", '%', (640, 80))
+            ("ALTITUDE", status["altitude"], "ft", (80, 80)),
+            ("AIRSPEED", status["airspeed"], "kts", (220, 80)),
+            ("HEADING", status["heading"], "°", (360, 80)),
+            ("ENGINE TEMP", status["engine_temp"], "°F", (500, 80)),
+            ("FUEL", f"{status['fuel_remaining']:.1f}", "%", (640, 80)),
         ]
 
         for name, value, unit, pos in instruments:
@@ -203,7 +210,10 @@ class FlightUI:
 
     def _draw_circular_gauge(self, name: str, value, unit: str, center: tuple):
         """Draw a circular gauge instrument."""
-        x, y = center[0] + self.instrument_panel_rect.x, center[1] + self.instrument_panel_rect.y
+        x, y = (
+            center[0] + self.instrument_panel_rect.x,
+            center[1] + self.instrument_panel_rect.y,
+        )
         radius = 35
 
         # Outer circle
@@ -228,7 +238,7 @@ class FlightUI:
         # Warning indicators
         if name == "ENGINE TEMP" and value > 220:
             pygame.draw.circle(self.screen, self.warning_color, (x, y), radius, 3)
-        elif name == "FUEL" and float(str(value).replace('%', '')) < 20:
+        elif name == "FUEL" and float(str(value).replace("%", "")) < 20:
             pygame.draw.circle(self.screen, self.warning_color, (x, y), radius, 3)
 
     def _draw_flight_info(self, status: Dict):
@@ -238,7 +248,9 @@ class FlightUI:
 
         # Title
         title = self.font.render("FLIGHT INFO", True, self.text_color)
-        self.screen.blit(title, (self.info_panel_rect.x + 10, self.info_panel_rect.y + 10))
+        self.screen.blit(
+            title, (self.info_panel_rect.x + 10, self.info_panel_rect.y + 10)
+        )
 
         # Flight information
         y_offset = 40
@@ -247,26 +259,30 @@ class FlightUI:
             f"Time: {self._format_time(status['elapsed_time'])}",
             f"Progress: {status['progress_percent']:.1f}%",
             f"Off Course: {status['off_course_distance']:.2f} nm",
-            f"Target HDG: {status['target_heading']}°"
+            f"Target HDG: {status['target_heading']}°",
         ]
 
         for item in info_items:
             text = self.small_font.render(item, True, self.text_color)
-            self.screen.blit(text, (self.info_panel_rect.x + 10, self.info_panel_rect.y + y_offset))
+            self.screen.blit(
+                text, (self.info_panel_rect.x + 10, self.info_panel_rect.y + y_offset)
+            )
             y_offset += 25
 
         # Weather info
-        weather = status['weather']
+        weather = status["weather"]
         weather_items = [
             f"Weather: {weather['condition'].replace('_', ' ').title()}",
             f"Wind: {weather['wind_direction']}° @ {weather['wind_speed']} kts",
-            f"Visibility: {weather['visibility']} miles"
+            f"Visibility: {weather['visibility']} miles",
         ]
 
         y_offset += 10
         for item in weather_items:
             text = self.small_font.render(item, True, self.text_color)
-            self.screen.blit(text, (self.info_panel_rect.x + 10, self.info_panel_rect.y + y_offset))
+            self.screen.blit(
+                text, (self.info_panel_rect.x + 10, self.info_panel_rect.y + y_offset)
+            )
             y_offset += 20
 
     def _draw_alerts_panel(self, status: Dict):
@@ -274,24 +290,38 @@ class FlightUI:
         pygame.draw.rect(self.screen, self.instrument_bg, self.alerts_panel_rect)
 
         # Use warning color if there are alerts
-        border_color = self.warning_color if status['system_alerts'] else self.text_color
+        border_color = (
+            self.warning_color if status["system_alerts"] else self.text_color
+        )
         pygame.draw.rect(self.screen, border_color, self.alerts_panel_rect, 2)
 
         # Title
         title = self.font.render("ALERTS", True, self.text_color)
-        self.screen.blit(title, (self.alerts_panel_rect.x + 10, self.alerts_panel_rect.y + 10))
+        self.screen.blit(
+            title, (self.alerts_panel_rect.x + 10, self.alerts_panel_rect.y + 10)
+        )
 
         # Alerts
         y_offset = 40
-        for alert in status['system_alerts'][-8:]:  # Show last 8 alerts
-            color = self.warning_color if "WARNING" in alert.upper() or "EMERGENCY" in alert.upper() else self.text_color
+        for alert in status["system_alerts"][-8:]:  # Show last 8 alerts
+            color = (
+                self.warning_color
+                if "WARNING" in alert.upper() or "EMERGENCY" in alert.upper()
+                else self.text_color
+            )
             text = self.small_font.render(alert, True, color)
-            self.screen.blit(text, (self.alerts_panel_rect.x + 10, self.alerts_panel_rect.y + y_offset))
+            self.screen.blit(
+                text,
+                (self.alerts_panel_rect.x + 10, self.alerts_panel_rect.y + y_offset),
+            )
             y_offset += 20
 
-        if not status['system_alerts']:
+        if not status["system_alerts"]:
             text = self.small_font.render("No active alerts", True, self.normal_color)
-            self.screen.blit(text, (self.alerts_panel_rect.x + 10, self.alerts_panel_rect.y + y_offset))
+            self.screen.blit(
+                text,
+                (self.alerts_panel_rect.x + 10, self.alerts_panel_rect.y + y_offset),
+            )
 
     def _draw_progress_panel(self, status: Dict):
         """Draw flight progress panel."""
@@ -300,20 +330,24 @@ class FlightUI:
 
         # Title
         title = self.font.render("PROGRESS", True, self.text_color)
-        self.screen.blit(title, (self.progress_panel_rect.x + 10, self.progress_panel_rect.y + 10))
+        self.screen.blit(
+            title, (self.progress_panel_rect.x + 10, self.progress_panel_rect.y + 10)
+        )
 
         # Progress bar
         progress_rect = pygame.Rect(
             self.progress_panel_rect.x + 10,
             self.progress_panel_rect.y + 40,
             self.progress_panel_rect.width - 20,
-            20
+            20,
         )
 
         pygame.draw.rect(self.screen, (60, 60, 70), progress_rect)
 
-        fill_width = int((status['progress_percent'] / 100) * progress_rect.width)
-        fill_rect = pygame.Rect(progress_rect.x, progress_rect.y, fill_width, progress_rect.height)
+        fill_width = int((status["progress_percent"] / 100) * progress_rect.width)
+        fill_rect = pygame.Rect(
+            progress_rect.x, progress_rect.y, fill_width, progress_rect.height
+        )
         pygame.draw.rect(self.screen, self.gauge_color, fill_rect)
 
         pygame.draw.rect(self.screen, self.text_color, progress_rect, 1)
@@ -321,20 +355,28 @@ class FlightUI:
         # Progress text
         progress_text = f"{status['progress_percent']:.1f}% Complete"
         text = self.small_font.render(progress_text, True, self.text_color)
-        self.screen.blit(text, (self.progress_panel_rect.x + 10, self.progress_panel_rect.y + 70))
+        self.screen.blit(
+            text, (self.progress_panel_rect.x + 10, self.progress_panel_rect.y + 70)
+        )
 
         # Performance metrics
-        perf = status['performance']
+        perf = status["performance"]
         y_offset = 95
         perf_items = [
             f"Course Deviations: {perf['course_deviations']}",
             f"System Alerts: {perf['alerts_count']}",
-            f"Fuel Efficiency: {perf['fuel_efficiency']:.1f}%"
+            f"Fuel Efficiency: {perf['fuel_efficiency']:.1f}%",
         ]
 
         for item in perf_items:
             text = self.small_font.render(item, True, self.text_color)
-            self.screen.blit(text, (self.progress_panel_rect.x + 10, self.progress_panel_rect.y + y_offset))
+            self.screen.blit(
+                text,
+                (
+                    self.progress_panel_rect.x + 10,
+                    self.progress_panel_rect.y + y_offset,
+                ),
+            )
             y_offset += 20
 
     def _draw_education_panel(self):
@@ -347,7 +389,9 @@ class FlightUI:
 
         # Title
         title = self.font.render("AVIATION EDUCATION", True, self.text_color)
-        self.screen.blit(title, (self.education_panel_rect.x + 10, self.education_panel_rect.y + 10))
+        self.screen.blit(
+            title, (self.education_panel_rect.x + 10, self.education_panel_rect.y + 10)
+        )
 
         # Education text (word wrapped)
         self._draw_wrapped_text(
@@ -356,7 +400,7 @@ class FlightUI:
             self.education_panel_rect.y + 40,
             self.education_panel_rect.width - 20,
             self.small_font,
-            self.text_color
+            self.text_color,
         )
 
     def _draw_flight_phase(self, status: Dict):
@@ -366,10 +410,10 @@ class FlightUI:
         self.screen.blit(text, (self.width - text.get_width() - 20, 20))
 
         # Phase-specific indicators
-        if status['flight_phase'] == 'takeoff':
+        if status["flight_phase"] == "takeoff":
             indicator = self.font.render("TAKING OFF", True, self.normal_color)
             self.screen.blit(indicator, (self.width - indicator.get_width() - 20, 60))
-        elif status['flight_phase'] == 'landing':
+        elif status["flight_phase"] == "landing":
             indicator = self.font.render("LANDING", True, self.warning_color)
             self.screen.blit(indicator, (self.width - indicator.get_width() - 20, 60))
 
@@ -379,27 +423,29 @@ class FlightUI:
         secs = int(seconds % 60)
         return f"{minutes:02d}:{secs:02d}"
 
-    def _draw_wrapped_text(self, text: str, x: int, y: int, max_width: int, font, color):
+    def _draw_wrapped_text(
+        self, text: str, x: int, y: int, max_width: int, font, color
+    ):
         """Draw text with word wrapping."""
-        words = text.split(' ')
+        words = text.split(" ")
         lines = []
         current_line = []
 
         for word in words:
-            test_line = ' '.join(current_line + [word])
+            test_line = " ".join(current_line + [word])
             test_surface = font.render(test_line, True, color)
 
             if test_surface.get_width() <= max_width:
                 current_line.append(word)
             else:
                 if current_line:
-                    lines.append(' '.join(current_line))
+                    lines.append(" ".join(current_line))
                     current_line = [word]
                 else:
                     lines.append(word)
 
         if current_line:
-            lines.append(' '.join(current_line))
+            lines.append(" ".join(current_line))
 
         for i, line in enumerate(lines[:5]):  # Max 5 lines
             line_surface = font.render(line, True, color)
@@ -408,22 +454,25 @@ class FlightUI:
     def _update_education_content(self):
         """Update educational content based on current flight phase."""
         status = flight_simulator._get_status()
-        if not status['is_flying']:
+        if not status["is_flying"]:
             return
 
-        phase = status['flight_phase']
+        phase = status["flight_phase"]
 
         education_content = {
-            'taxi': "During taxi, pilots follow ground control instructions and perform final checks before takeoff. The aircraft moves slowly on the ground using engine power.",
-            'takeoff': "Takeoff requires the pilot to apply full power and maintain runway centerline. Rotation speed varies by aircraft weight and conditions.",
-            'climb': "During climb, pilots monitor engine parameters and follow ATC altitude assignments. Rate of climb decreases with altitude due to thinner air.",
-            'cruise': "Cruise flight is the most efficient phase. Pilots monitor navigation, weather, and fuel consumption while maintaining assigned altitude and heading.",
-            'descent': "Descent planning begins well before the destination. Pilots must balance speed, altitude, and distance to arrive at the correct approach point.",
-            'approach': "The approach phase requires precise navigation and speed control. Pilots configure the aircraft for landing and follow instrument procedures.",
-            'landing': "Landing requires precise control of airspeed, altitude, and runway alignment. The goal is a smooth touchdown in the first third of the runway."
+            "taxi": "During taxi, pilots follow ground control instructions and perform final checks before takeoff. The aircraft moves slowly on the ground using engine power.",
+            "takeoff": "Takeoff requires the pilot to apply full power and maintain runway centerline. Rotation speed varies by aircraft weight and conditions.",
+            "climb": "During climb, pilots monitor engine parameters and follow ATC altitude assignments. Rate of climb decreases with altitude due to thinner air.",
+            "cruise": "Cruise flight is the most efficient phase. Pilots monitor navigation, weather, and fuel consumption while maintaining assigned altitude and heading.",
+            "descent": "Descent planning begins well before the destination. Pilots must balance speed, altitude, and distance to arrive at the correct approach point.",
+            "approach": "The approach phase requires precise navigation and speed control. Pilots configure the aircraft for landing and follow instrument procedures.",
+            "landing": "Landing requires precise control of airspeed, altitude, and runway alignment. The goal is a smooth touchdown in the first third of the runway.",
         }
 
-        self.education_text = education_content.get(phase, "Aviation is a field that requires constant learning and attention to safety procedures.")
+        self.education_text = education_content.get(
+            phase,
+            "Aviation is a field that requires constant learning and attention to safety procedures.",
+        )
 
     def show(self):
         """Show the flight UI."""

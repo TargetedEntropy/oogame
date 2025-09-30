@@ -6,12 +6,12 @@ from typing import Optional
 
 
 class AircraftType(IntEnum):
-    SINGLE_ENGINE_PROPS = 0      # Cessna, Piper Cherokee, etc.
-    MULTI_ENGINE_PROPS = 1       # Twin engine aircraft
-    JETS_COMMERCIAL = 2          # Airliners, regional jets
-    JETS_MILITARY = 3            # Fighter jets, cargo planes
-    SEAPLANES_AMPHIBIANS = 4     # Float planes, flying boats
-    HELICOPTERS_ROTORCRAFT = 5   # Helicopters, autogyros
+    SINGLE_ENGINE_PROPS = 0  # Cessna, Piper Cherokee, etc.
+    MULTI_ENGINE_PROPS = 1  # Twin engine aircraft
+    JETS_COMMERCIAL = 2  # Airliners, regional jets
+    JETS_MILITARY = 3  # Fighter jets, cargo planes
+    SEAPLANES_AMPHIBIANS = 4  # Float planes, flying boats
+    HELICOPTERS_ROTORCRAFT = 5  # Helicopters, autogyros
 
 
 class GameData:
@@ -51,7 +51,7 @@ class GameData:
             AircraftType.JETS_COMMERCIAL: "Commercial Jet Aircraft",
             AircraftType.JETS_MILITARY: "Military Jet Aircraft",
             AircraftType.SEAPLANES_AMPHIBIANS: "Seaplanes & Amphibious Aircraft",
-            AircraftType.HELICOPTERS_ROTORCRAFT: "Helicopters & Rotorcraft"
+            AircraftType.HELICOPTERS_ROTORCRAFT: "Helicopters & Rotorcraft",
         }
         return subject_names.get(self.educational_subject, "Aircraft Education")
 
@@ -64,21 +64,25 @@ class GameData:
             "educational_subject": int(self.educational_subject),
             "use_gemma3n_latest": self.use_gemma3n_latest,
             "player_name": self.player_name,
-            "player_pronouns": self.player_pronouns
+            "player_pronouns": self.player_pronouns,
         }
 
-        with open(self.config_file, 'w') as f:
+        with open(self.config_file, "w") as f:
             json.dump(settings, f, indent=2)
 
     def load_settings(self):
         """Load settings from JSON file."""
         if self.config_file.exists():
             try:
-                with open(self.config_file, 'r') as f:
+                with open(self.config_file, "r") as f:
                     settings = json.load(f)
 
-                self.ollama_host_url = settings.get("ollama_host_url", self.ollama_host_url)
-                self.educational_subject = AircraftType(settings.get("educational_subject", 0))
+                self.ollama_host_url = settings.get(
+                    "ollama_host_url", self.ollama_host_url
+                )
+                self.educational_subject = AircraftType(
+                    settings.get("educational_subject", 0)
+                )
                 self.use_gemma3n_latest = settings.get("use_gemma3n_latest", True)
                 self.player_name = settings.get("player_name", "Learner")
                 self.player_pronouns = settings.get("player_pronouns", "they/them")
