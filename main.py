@@ -15,7 +15,7 @@ from core.ollama_service import Message
 from core.npc_system import npc_manager
 from core.flight_simulator import flight_simulator
 from ui.conversation_ui import ConversationUI
-from ui.flight_ui_enhanced import FlightUIEnhanced
+from ui.flight_ui import FlightUI
 
 
 class MLEducationGame:
@@ -36,7 +36,7 @@ class MLEducationGame:
         # Game components
         self.conversation = EducationalConversation()
         self.ui = ConversationUI(self.screen)
-        self.flight_ui = FlightUIEnhanced(self.screen)
+        self.flight_ui = FlightUI(self.screen)
 
         # Load NPC backstory
         self.npc_backstory = self._load_npc_backstory()
