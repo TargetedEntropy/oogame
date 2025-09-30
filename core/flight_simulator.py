@@ -148,37 +148,37 @@ class FlightSimulator:
                 "cruise_speed": 120,  # knots
                 "cruise_altitude": 6500,  # feet
                 "fuel_consumption": 1.2,  # gallons per nm
-                "drift_sensitivity": 2.0
+                "drift_sensitivity": 1.0  # Reduced from 2.0
             },
             "MULTI_ENGINE_PROPS": {
                 "cruise_speed": 180,
                 "cruise_altitude": 12000,
                 "fuel_consumption": 2.5,
-                "drift_sensitivity": 1.5
+                "drift_sensitivity": 0.8  # Reduced from 1.5
             },
             "JETS_COMMERCIAL": {
                 "cruise_speed": 450,
                 "cruise_altitude": 35000,
                 "fuel_consumption": 8.0,
-                "drift_sensitivity": 0.8
+                "drift_sensitivity": 0.5  # Reduced from 0.8
             },
             "JETS_MILITARY": {
                 "cruise_speed": 500,
                 "cruise_altitude": 40000,
                 "fuel_consumption": 12.0,
-                "drift_sensitivity": 0.5
+                "drift_sensitivity": 0.3  # Reduced from 0.5
             },
             "SEAPLANES_AMPHIBIANS": {
                 "cruise_speed": 140,
                 "cruise_altitude": 8000,
                 "fuel_consumption": 1.8,
-                "drift_sensitivity": 2.5
+                "drift_sensitivity": 1.2  # Reduced from 2.5
             },
             "HELICOPTERS_ROTORCRAFT": {
                 "cruise_speed": 100,
                 "cruise_altitude": 1500,
                 "fuel_consumption": 2.0,
-                "drift_sensitivity": 3.0
+                "drift_sensitivity": 1.5  # Reduced from 3.0
             }
         }
         return specs.get(aircraft_type, specs["SINGLE_ENGINE_PROPS"])
@@ -207,9 +207,9 @@ class FlightSimulator:
         self.current_lng = flight_plan.departure.coordinates[1]
         self.progress_percent = 0.0
 
-        # Initialize drift mechanics
+        # Initialize drift mechanics - MUCH MORE REASONABLE!
         aircraft_specs = self._get_aircraft_specs(flight_plan.aircraft_type)
-        self.drift_rate = random.uniform(0.5, 2.0) * aircraft_specs['drift_sensitivity']
+        self.drift_rate = random.uniform(0.1, 0.3) * aircraft_specs['drift_sensitivity']  # Reduced from 0.5-2.0
         self.current_weather = self._generate_weather()
 
         # Reset tracking
@@ -256,6 +256,9 @@ class FlightSimulator:
 
         # Apply Desert Bus style drift mechanics
         self._apply_drift_mechanics(dt)
+
+        # Apply autopilot correction if enabled
+        self._apply_autopilot_correction(dt)
 
         # Update position
         self._update_position(dt)
@@ -321,21 +324,22 @@ class FlightSimulator:
             if self.altitude > dest_alt:
                 self.altitude -= 100 * dt
 
-        # Update fuel consumption
+        # Update fuel consumption - MUCH MORE REASONABLE
         if self.flight_phase not in [FlightPhase.TAXI, FlightPhase.COMPLETED]:
-            fuel_rate = 0.1 * dt  # Percentage per second
+            fuel_rate = 0.02 * dt  # Reduced from 0.1 - percentage per second
             self.fuel_remaining = max(0, self.fuel_remaining - fuel_rate)
 
     def _apply_drift_mechanics(self, dt: float):
-        """Apply Desert Bus style drift mechanics."""
-        # Constant drift due to wind/aircraft characteristics
-        drift_amount = self.drift_rate * dt
+        """Apply Desert Bus style drift mechanics - BALANCED VERSION."""
+        # Much gentler drift - should be correctable with occasional input
+        base_drift = self.drift_rate * dt * 0.5  # Reduced by half
 
-        # Add wind effect
-        wind_effect = self.current_weather.crosswind_component * 0.1 * dt
+        # Gentle wind effect
+        wind_effect = self.current_weather.crosswind_component * 0.02 * dt  # Reduced from 0.1
 
-        # Apply drift to heading
-        self.heading += drift_amount + wind_effect
+        # Apply drift to heading (much more reasonable)
+        total_drift = base_drift + wind_effect
+        self.heading += total_drift
         self.heading = self.heading % 360
 
         # Calculate how far off course we are
@@ -343,9 +347,10 @@ class FlightSimulator:
         if heading_error > 180:
             heading_error = 360 - heading_error
 
-        if heading_error > 10:  # More than 10 degrees off course
-            self.off_course_distance += 0.1 * dt
-            if heading_error > 20:
+        # Much more forgiving thresholds
+        if heading_error > 20:  # Increased from 10 degrees
+            self.off_course_distance += 0.05 * dt  # Reduced penalty
+            if heading_error > 45:  # Increased from 20 degrees
                 self.course_deviations += 1
                 self.system_alerts.append("Course deviation warning")
 
@@ -391,13 +396,16 @@ class FlightSimulator:
 
     def _check_systems(self):
         """Check aircraft systems for issues."""
-        # Engine temperature check
+        # Much more stable engine temperature
         if self.flight_phase in [FlightPhase.TAKEOFF, FlightPhase.CLIMB]:
-            self.engine_temp += random.uniform(-2, 8)
+            self.engine_temp += random.uniform(-1, 2)  # Reduced variation
         else:
-            self.engine_temp += random.uniform(-3, 3)
+            self.engine_temp += random.uniform(-1, 1)  # Much more stable
 
-        if self.engine_temp > 220:
+        # Keep temperature in reasonable range
+        self.engine_temp = max(160, min(250, self.engine_temp))
+
+        if self.engine_temp > 230:  # Raised threshold
             self.system_alerts.append("Engine temperature high")
             self.system_alerts_count += 1
 
@@ -430,14 +438,31 @@ class FlightSimulator:
     def set_autopilot(self, enabled: bool):
         """Enable/disable autopilot."""
         self.autopilot_enabled = enabled
-        if enabled:
-            # Autopilot gradually corrects course
-            heading_error = self.target_heading - self.heading
-            if heading_error > 180:
-                heading_error -= 360
-            elif heading_error < -180:
-                heading_error += 360
-            self.heading += heading_error * 0.1  # Gradual correction
+
+    def _apply_autopilot_correction(self, dt: float):
+        """Apply autopilot corrections during update."""
+        if not self.autopilot_enabled:
+            return
+
+        # Autopilot gradually corrects course
+        heading_error = self.target_heading - self.heading
+        if heading_error > 180:
+            heading_error -= 360
+        elif heading_error < -180:
+            heading_error += 360
+
+        # More effective autopilot correction
+        correction_rate = 2.0  # degrees per second correction rate
+        max_correction = correction_rate * dt
+
+        if abs(heading_error) > 0.5:  # Only correct if error is significant
+            if heading_error > 0:
+                correction = min(heading_error, max_correction)
+            else:
+                correction = max(heading_error, -max_correction)
+
+            self.heading += correction
+            self.heading = self.heading % 360
 
     def _get_status(self) -> Dict:
         """Get current flight status."""
