@@ -76,34 +76,40 @@ class FlightUIEnhanced:
             'heading': self._load_bold_font(24)
         }
 
-        # === PANEL LAYOUT - Professional cockpit design ===
+        # === PANEL LAYOUT - Fixed overlapping issues ===
+        # Calculate proper layout based on screen size
+        bottom_panel_height = 120  # Reduced from 140
+        info_panel_top = 460
+        info_panel_height = self.height - info_panel_top - bottom_panel_height - 20
+
         self.panels = {
             # Primary flight display (left side)
-            'pfd': pygame.Rect(20, 60, 380, 380),
+            'pfd': pygame.Rect(20, 60, 350, 360),  # Slightly smaller
 
             # Navigation display (center)
-            'nav': pygame.Rect(420, 60, 380, 380),
+            'nav': pygame.Rect(390, 60, 350, 360),  # Adjusted position
 
             # Engine and systems (right side)
-            'engine': pygame.Rect(820, 60, 180, 380),
+            'engine': pygame.Rect(760, 60, 180, 360),
 
             # Top status bar
             'status_bar': pygame.Rect(0, 0, self.width, 50),
 
-            # Bottom control panel
-            'controls': pygame.Rect(0, self.height - 140, self.width, 140),
+            # Bottom control panel - REDUCED HEIGHT
+            'controls': pygame.Rect(0, self.height - bottom_panel_height, self.width, bottom_panel_height),
 
-            # Radio/comms panel
-            'radio': pygame.Rect(20, 460, 280, 180),
+            # Secondary panels - PROPER SPACING
+            # Radio/comms panel (left)
+            'radio': pygame.Rect(20, info_panel_top, 230, info_panel_height),
 
-            # Flight info panel
-            'info': pygame.Rect(320, 460, 280, 180),
+            # Flight info panel (center-left)
+            'info': pygame.Rect(270, info_panel_top, 230, info_panel_height),
 
-            # Weather panel
-            'weather': pygame.Rect(620, 460, 280, 180),
+            # Weather panel (center-right)
+            'weather': pygame.Rect(520, info_panel_top, 230, info_panel_height),
 
-            # Alerts panel
-            'alerts': pygame.Rect(920, 460, self.width - 940, 180)
+            # Alerts panel (right)
+            'alerts': pygame.Rect(770, info_panel_top, self.width - 790, info_panel_height)
         }
 
         # === ANIMATION STATES ===
