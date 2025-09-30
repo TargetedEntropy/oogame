@@ -114,11 +114,11 @@ class TestFlightPhases(unittest.TestCase):
 
         # Should still be flying after short simulation
         self.assertTrue(self.simulator.is_flying)
-        self.assertGreater(self.simulator.flight_time, 0)
 
         # Verify systems are functioning
         self.assertGreater(self.simulator.engine_temp, 150)
         self.assertLess(self.simulator.fuel_remaining, 100.0)
+        self.assertGreater(self.simulator.elapsed_time, 0)
 
         end_time = time.time()
         self.assertLess(end_time - start_time, 5.0)  # Should complete quickly
@@ -150,8 +150,8 @@ class TestFlightPhases(unittest.TestCase):
         self.simulator.start_flight(self.flight_plan)
         self.simulator.flight_phase = FlightPhase.CRUISE
 
-        # Test extreme crosswind
-        self.simulator.current_weather.condition = WeatherCondition.STORMY
+        # Test extreme crosswind - use valid weather condition
+        self.simulator.current_weather.condition = WeatherCondition.TURBULENCE
         self.simulator.current_weather.wind_speed = 50
         self.simulator.current_weather.crosswind_component = 40
 

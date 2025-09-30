@@ -1,6 +1,27 @@
+# Core game dependencies
 pygame>=2.5.0
 pygame_gui>=0.6.9
 pygame-menu>=4.4.3
 requests>=2.31.0
 aiohttp>=3.9.0
 python-dotenv>=1.0.0
+
+# Testing dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.10.0
+coverage>=7.0.0
+
+# Development dependencies (optional)
+black>=23.0.0
+isort>=5.12.0
+flake8>=6.0.0
+mypy>=1.0.0
+pylint>=2.17.0
+bandit>=1.7.0
+safety>=2.3.0
+
+# Performance testing (optional)
+pytest-benchmark>=4.0.0
+memory-profiler>=0.60.0
