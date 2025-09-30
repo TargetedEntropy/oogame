@@ -2,6 +2,7 @@ from typing import Dict, List, Optional
 from enum import Enum
 from core.conversation import Conversation, Message
 from core.game_data import AircraftType, game_data
+from core.npc_system import npc_manager
 
 
 class DifficultyLevel(Enum):
@@ -20,6 +21,12 @@ class EducationalConversation(Conversation):
 
     def get_subject_prompt(self) -> str:
         """Get the initial system prompt for the current aircraft type."""
+        # Use NPC context if available
+        npc_context = npc_manager.get_npc_conversation_context()
+        if npc_context and npc_context != "You are an aviation educator helping students learn about aircraft.":
+            return npc_context
+
+        # Fall back to default prompts
         prompts = {
             AircraftType.SINGLE_ENGINE_PROPS: """You are an expert aviation educator teaching about single-engine propeller aircraft.
 Focus on:
@@ -99,6 +106,16 @@ Current difficulty level: {self.difficulty_level.value}"""
 
     def get_initial_greeting(self) -> str:
         """Get subject-specific initial greeting."""
+        # Use NPC-specific greeting if available
+        if npc_manager.current_npc and npc_manager.current_location:
+            npc = npc_manager.current_npc
+            location = npc_manager.current_location
+            return (f"Hello {game_data.player_name}! I'm {npc.name}, and welcome to {location.name}. "
+                   f"{location.description} I specialize in {', '.join(npc.specialties[:2])} "
+                   f"and I'm excited to share my knowledge of aviation with you. "
+                   f"What would you like to learn about today?")
+
+        # Fall back to default greetings
         greetings = {
             AircraftType.SINGLE_ENGINE_PROPS:
                 f"Welcome to the flight line, {game_data.player_name}! "

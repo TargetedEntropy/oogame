@@ -1,0 +1,17 @@
+{
+  "id": "frank_torres",
+  "name": "Frank Torres",
+  "role": "instructor",
+  "location_types": ["flight_training", "general_aviation"],
+  "specialties": ["Flight Training", "Single-Engine Operations", "Private Pilot License", "Instrument Flying"],
+  "personality_traits": ["Patient", "Methodical", "Encouraging", "Safety-conscious"],
+  "backstory": "Frank has been a certified flight instructor for over 12 years, teaching hundreds of students to fly. He started flying in the military before transitioning to civilian instruction. Frank specializes in primary flight training and has a talent for breaking down complex aviation concepts into digestible lessons for new pilots.",
+  "teaching_style": "Step-by-step approach with hands-on demonstrations. Emphasizes fundamentals and building confidence through repetition and positive reinforcement.",
+  "signature_phrases": [
+    "Let's start with the basics and build from there",
+    "The best pilots never stop learning",
+    "Feel the aircraft - it's trying to tell you something"
+  ],
+  "experience_years": 12,
+  "preferred_aircraft": ["Cessna 172", "Piper Cherokee", "Cessna 152"]
+}

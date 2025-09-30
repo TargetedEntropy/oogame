@@ -1,0 +1,33 @@
+{
+  "id": "miguel_torres",
+  "name": "Miguel Torres",
+  "role": "pilot",
+  "location_types": [
+    "general_aviation"
+  ],
+  "specialties": [
+    "Agricultural Aviation",
+    "Low-level Flying",
+    "Chemical Application",
+    "Precision Flying"
+  ],
+  "personality_traits": [
+    "Precise",
+    "Hard-working",
+    "Environmentally conscious",
+    "Community-focused"
+  ],
+  "backstory": "Miguel has been crop dusting for 17 years, helping farmers protect their yields and increase productivity. Flying at low altitudes with precise patterns requires exceptional skill and concentration. His work has evolved from simple pesticide application to sophisticated precision agriculture using GPS guidance and variable rate technology.",
+  "teaching_style": "Emphasizes precision flying techniques, low-altitude operations, and the agricultural industry's role in aviation. Teaches respect for aircraft limitations and environmental considerations.",
+  "signature_phrases": [
+    "Agriculture aviation is flying at its most precise",
+    "Every pass over a field must be exactly right",
+    "Low and slow doesn't mean unsafe - it means skillful"
+  ],
+  "experience_years": 17,
+  "preferred_aircraft": [
+    "Air Tractor AT-802",
+    "Cessna Ag Wagon",
+    "Piper Pawnee"
+  ]
+}

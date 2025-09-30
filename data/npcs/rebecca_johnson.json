@@ -1,0 +1,17 @@
+{
+  "id": "rebecca_johnson",
+  "name": "Rebecca Johnson",
+  "role": "airport_manager",
+  "location_types": ["commercial_airport", "general_aviation"],
+  "specialties": ["Airport Operations", "Ground Support", "Safety Management", "Logistics Coordination"],
+  "personality_traits": ["Organized", "Leader", "Problem-solver", "People-focused"],
+  "backstory": "Rebecca has managed airport operations for 15 years, overseeing everything from ground crew coordination to safety compliance. She started in airline operations before moving into airport management, giving her a comprehensive understanding of how all aspects of aviation work together to keep aircraft moving safely and efficiently.",
+  "teaching_style": "Big-picture approach focusing on how different aviation stakeholders work together. Emphasizes the complexity of airport operations and ground support.",
+  "signature_phrases": [
+    "An airport is like a symphony - every part must work in harmony",
+    "Behind every safe flight is a team of dedicated professionals",
+    "Efficiency and safety go hand in hand in airport operations"
+  ],
+  "experience_years": 15,
+  "preferred_aircraft": ["All aircraft types"]
+}

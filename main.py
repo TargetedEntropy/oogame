@@ -12,6 +12,7 @@ from core.game_data import game_data, AircraftType
 from core.educational_conversation import EducationalConversation
 from core.conversation import SignalType
 from core.ollama_service import Message
+from core.npc_system import npc_manager
 from ui.conversation_ui import ConversationUI
 
 
@@ -118,6 +119,7 @@ class MLEducationGame:
 
         # Action buttons
         self.menu.add.button('Start Learning', self._start_conversation_from_menu)
+        self.menu.add.button('Travel to Airport', self._show_travel_menu)
         self.menu.add.button('Settings', self._show_settings)
         self.menu.add.button('Help', self._show_help_menu)
         self.menu.add.button('Quit', pygame_menu.events.EXIT)
@@ -143,6 +145,9 @@ class MLEducationGame:
 
         # Create help menu
         self._create_help_menu()
+
+        # Create travel menu
+        self._create_travel_menu()
 
     def _create_settings_menu(self):
         """Create the settings menu."""
@@ -235,6 +240,57 @@ class MLEducationGame:
         self.help_menu.add.vertical_margin(30)
         self.help_menu.add.button('Back', pygame_menu.events.BACK)
 
+    def _create_travel_menu(self):
+        """Create the travel menu for location selection."""
+        custom_theme = self.menu.get_theme().copy()
+
+        self.travel_menu = pygame_menu.Menu(
+            title='Travel to Airport',
+            width=self.width,
+            height=self.height,
+            theme=custom_theme
+        )
+
+        # Current location info
+        if npc_manager.current_location:
+            self.travel_menu.add.label(
+                f'Current: {npc_manager.current_location.name}',
+                font_size=20,
+                font_color=(180, 220, 180)
+            )
+        else:
+            self.travel_menu.add.label(
+                'No current location',
+                font_size=20,
+                font_color=(180, 180, 180)
+            )
+
+        self.travel_menu.add.vertical_margin(20)
+
+        # Add location buttons
+        for location in npc_manager.locations:
+            button_text = f"{location.name} ({location.country})"
+            self.travel_menu.add.button(
+                button_text,
+                self._travel_to_location,
+                location.id
+            )
+
+        self.travel_menu.add.vertical_margin(30)
+        self.travel_menu.add.button('Back', pygame_menu.events.BACK)
+
+    def _travel_to_location(self, location_id: str):
+        """Travel to selected location."""
+        location, npc = npc_manager.travel_to_location(location_id)
+        if location and npc:
+            # Show travel message
+            self._show_message(f"Traveled to {location.name}! Met {npc.name}")
+            # Start conversation immediately
+            self.travel_menu.disable()
+            self._start_conversation_from_menu()
+        else:
+            self._show_message("Travel failed - location not found")
+
     def _on_subject_change(self, value, subject):
         """Handle subject change in menu."""
         game_data.educational_subject = subject
@@ -304,6 +360,10 @@ class MLEducationGame:
     def _show_help_menu(self):
         """Show help menu."""
         self.help_menu.mainloop(self.screen)
+
+    def _show_travel_menu(self):
+        """Show travel menu."""
+        self.travel_menu.mainloop(self.screen)
 
     def _load_npc_backstory(self) -> str:
         """Load NPC backstory from file."""

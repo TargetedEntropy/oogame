@@ -1,0 +1,34 @@
+{
+  "id": "bob_fletcher",
+  "name": "Bob Fletcher",
+  "role": "vintage_enthusiast",
+  "location_types": [
+    "vintage_airfield",
+    "general_aviation"
+  ],
+  "specialties": [
+    "Airshow Flying",
+    "Formation Flying",
+    "Aerobatic Performance",
+    "Crowd Entertainment"
+  ],
+  "personality_traits": [
+    "Showman",
+    "Skilled",
+    "Safety-conscious",
+    "Passionate"
+  ],
+  "backstory": "Bob has been performing in airshows for 24 years, flying everything from World War II fighters to modern aerobatic aircraft. His precision flying and crowd-pleasing performances have made him a favorite at aviation events across the country. Despite the entertainment focus, his dedication to safety and aircraft systems knowledge is absolute.",
+  "teaching_style": "Combines entertainment with education, using airshow routines to teach aircraft performance, aerodynamics, and precision flying. Emphasizes safety planning and risk management in high-performance flying.",
+  "signature_phrases": [
+    "Airshow flying is about precision disguised as excitement",
+    "Every maneuver must be practiced until it's second nature",
+    "The crowd sees the show, but safety is what matters most"
+  ],
+  "experience_years": 24,
+  "preferred_aircraft": [
+    "P-51 Mustang",
+    "Extra 330SC",
+    "Pitts Special"
+  ]
+}

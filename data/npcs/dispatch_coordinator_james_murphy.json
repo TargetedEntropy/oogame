@@ -1,0 +1,32 @@
+{
+  "id": "dispatch_coordinator_james_murphy",
+  "name": "James Murphy",
+  "role": "instructor",
+  "location_types": [
+    "commercial_airport",
+    "cargo_hub"
+  ],
+  "specialties": [
+    "Flight Planning",
+    "Weather Analysis",
+    "Fuel Management",
+    "Route Optimization"
+  ],
+  "personality_traits": [
+    "Analytical",
+    "Detail-oriented",
+    "Calm under pressure",
+    "Systematic"
+  ],
+  "backstory": "James has been a flight dispatcher for 13 years, planning routes and monitoring flights for a major airline. His expertise in weather analysis, fuel planning, and route optimization helps ensure safe and efficient airline operations. He's handled everything from routine flights to complex weather diversions and emergency situations.",
+  "teaching_style": "Data-driven instruction focusing on flight planning methodologies, weather interpretation, and the dispatch-pilot partnership. Uses real airline operations to teach decision-making processes.",
+  "signature_phrases": [
+    "Flight planning is chess - you must think several moves ahead",
+    "Weather doesn't follow schedules, but we plan as if it might",
+    "A good dispatcher is the pilot's partner on the ground"
+  ],
+  "experience_years": 13,
+  "preferred_aircraft": [
+    "Plans routes for all commercial aircraft"
+  ]
+}

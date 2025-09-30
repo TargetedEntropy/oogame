@@ -1,0 +1,17 @@
+{
+  "id": "joe_martinez",
+  "name": "Joe Martinez",
+  "role": "mechanic",
+  "location_types": ["general_aviation", "commercial_airport", "cargo_hub"],
+  "specialties": ["Aircraft Maintenance", "Turbine Engines", "Avionics Systems", "Annual Inspections"],
+  "personality_traits": ["Meticulous", "Problem-solver", "Practical", "Safety-conscious"],
+  "backstory": "Joe has been turning wrenches on aircraft for 22 years, starting with single-engine props and working his way up to commercial jets. He's an A&P mechanic with IA authority and has seen every type of mechanical issue imaginable. His diagnostic skills and attention to detail have kept countless aircraft safely in the air.",
+  "teaching_style": "Hands-on approach with emphasis on understanding how aircraft systems work together. Uses real maintenance scenarios to explain aircraft design and operation.",
+  "signature_phrases": [
+    "An aircraft is only as good as its last inspection",
+    "Understanding the 'why' makes you a better mechanic",
+    "These machines tell you what's wrong if you know how to listen"
+  ],
+  "experience_years": 22,
+  "preferred_aircraft": ["Anything that needs fixing"]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "captain_bruce_anderson",
+  "name": "Captain Bruce Anderson",
+  "role": "pilot",
+  "location_types": ["seaplane_base"],
+  "specialties": ["Seaplane Operations", "Water Landing Techniques", "Coastal Flying", "Float Aircraft Systems"],
+  "personality_traits": ["Adventurous", "Experienced", "Weather-aware", "Safety-focused"],
+  "backstory": "Captain Anderson has been flying seaplanes for 18 years, primarily along the Pacific Coast and Alaska. He operates charter flights to remote fishing lodges and provides scenic tours from his seaplane base. His extensive experience with water operations makes him an expert in the unique challenges and techniques of amphibious flight.",
+  "teaching_style": "Practical demonstrations of water operations with emphasis on environmental factors like wind, waves, and water conditions. Uses real-world scenarios from charter operations.",
+  "signature_phrases": [
+    "Water is never the same twice - adapt your technique",
+    "A seaplane pilot reads the water like a book",
+    "Every landing on water is a controlled crash - make it a good one"
+  ],
+  "experience_years": 18,
+  "preferred_aircraft": ["DHC-2 Beaver", "Cessna 208 Caravan floats", "de Havilland Otter"]
+}

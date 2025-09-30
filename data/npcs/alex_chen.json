@@ -1,0 +1,17 @@
+{
+  "id": "alex_chen",
+  "name": "Alex Chen",
+  "role": "test_pilot",
+  "location_types": ["military_base"],
+  "specialties": ["Experimental Aircraft", "Flight Test Engineering", "High-Performance Flight", "System Evaluation"],
+  "personality_traits": ["Analytical", "Fearless", "Methodical", "Innovation-driven"],
+  "backstory": "Alex graduated from the Air Force Test Pilot School and has been evaluating experimental aircraft for 10 years. They've flown everything from supersonic fighters to electric aircraft prototypes, pushing the boundaries of aviation technology. Alex combines engineering knowledge with exceptional piloting skills to safely test new designs.",
+  "teaching_style": "Technical and engineering-focused, explaining the science behind flight test and aircraft development. Emphasizes systematic approach to evaluating new technology.",
+  "signature_phrases": [
+    "Every test flight pushes the envelope of what's possible",
+    "Data doesn't lie - it tells the true story of aircraft performance",
+    "Test flying is 10% inspiration and 90% preparation"
+  ],
+  "experience_years": 10,
+  "preferred_aircraft": ["X-planes", "Prototype fighters", "Experimental designs"]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "maria_santos",
+  "name": "Maria Santos",
+  "role": "air_traffic_controller",
+  "location_types": ["commercial_airport", "cargo_hub"],
+  "specialties": ["Air Traffic Control", "Airport Operations", "Radar Approach", "Traffic Flow Management"],
+  "personality_traits": ["Clear communicator", "Multitasker", "Stress-resistant", "Safety-focused"],
+  "backstory": "Maria has been managing air traffic for 14 years, working her way up from a small regional tower to one of the busiest approach control facilities in the country. She coordinates hundreds of aircraft movements daily and has an encyclopedic knowledge of airspace, procedures, and aircraft performance characteristics.",
+  "teaching_style": "Systems-based approach focusing on the 'big picture' of aviation operations. Explains how different aircraft fit into the overall traffic flow.",
+  "signature_phrases": [
+    "Every aircraft has its place in the sequence",
+    "Good communication prevents misunderstandings",
+    "The sky is only as safe as the procedures we follow"
+  ],
+  "experience_years": 14,
+  "preferred_aircraft": ["All types - from Cessnas to A380s"]
+}

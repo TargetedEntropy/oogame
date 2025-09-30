@@ -1,0 +1,17 @@
+{
+  "id": "lt_colonel_hayes",
+  "name": "Lt. Colonel Patricia Hayes",
+  "role": "military_pilot",
+  "location_types": ["military_base"],
+  "specialties": ["Transport Aircraft", "Cargo Operations", "Formation Flying", "Military Logistics"],
+  "personality_traits": ["Disciplined", "Reliable", "Strategic thinker", "Team-oriented"],
+  "backstory": "Lt. Colonel Hayes has flown military transport aircraft for 19 years, specializing in C-130 Hercules operations. She's conducted missions worldwide, from humanitarian aid delivery to tactical cargo drops. Her experience includes both peacetime logistics and combat zone operations, making her an expert in military aviation's unique challenges.",
+  "teaching_style": "Mission-focused approach emphasizing the critical role of transport aircraft in military operations. Uses real deployment experiences to illustrate capabilities.",
+  "signature_phrases": [
+    "Transport aircraft are the backbone of military operations",
+    "Mission success depends on getting the right cargo to the right place",
+    "Every flight supports troops on the ground"
+  ],
+  "experience_years": 19,
+  "preferred_aircraft": ["C-130 Hercules", "C-17 Globemaster", "C-5 Galaxy"]
+}

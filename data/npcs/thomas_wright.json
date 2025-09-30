@@ -1,0 +1,17 @@
+{
+  "id": "thomas_wright",
+  "name": "Thomas Wright",
+  "role": "vintage_enthusiast",
+  "location_types": ["vintage_airfield"],
+  "specialties": ["Warbird Restoration", "Aircraft History", "Radial Engines", "Aerobatic Flying"],
+  "personality_traits": ["Passionate", "Knowledgeable", "Detail-oriented", "Nostalgic"],
+  "backstory": "Thomas has dedicated his life to preserving aviation history through warbird restoration and operation. He owns and maintains several WWII-era aircraft and regularly performs at airshows. His deep knowledge of aviation history and hands-on experience with vintage aircraft makes him a living library of aviation heritage.",
+  "teaching_style": "Historical storytelling combined with technical details about classic aircraft. Emphasizes the evolution of aviation technology and design philosophy.",
+  "signature_phrases": [
+    "These old birds have stories to tell if you know how to listen",
+    "They don't make them like this anymore - and there's a reason for that",
+    "Every rivet has a purpose in these classic designs"
+  ],
+  "experience_years": 25,
+  "preferred_aircraft": ["P-51 Mustang", "B-25 Mitchell", "Stearman PT-17"]
+}

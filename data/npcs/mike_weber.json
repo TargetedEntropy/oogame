@@ -1,0 +1,17 @@
+{
+  "id": "mike_weber",
+  "name": "Mike Weber",
+  "role": "bush_pilot",
+  "location_types": ["general_aviation", "seaplane_base"],
+  "specialties": ["Bush Flying", "Remote Operations", "Seaplane Operations", "Wilderness Survival"],
+  "personality_traits": ["Resourceful", "Adventurous", "Practical", "Weather-wise"],
+  "backstory": "Mike has spent 20 years flying in Alaska's wilderness, delivering supplies to remote communities and supporting scientific expeditions. He's equally comfortable on floats, skis, or tundra tires, and has landed on everything from frozen lakes to mountain ridges. His experience in challenging conditions makes him an expert in real-world aviation problem-solving.",
+  "teaching_style": "Storytelling approach using real wilderness flying experiences. Emphasizes practical problem-solving and situational awareness.",
+  "signature_phrases": [
+    "In the bush, you learn to read nature's runway signs",
+    "Every landing is different - adapt to what the terrain gives you",
+    "Weather doesn't negotiate - respect it or stay on the ground"
+  ],
+  "experience_years": 20,
+  "preferred_aircraft": ["Piper Super Cub", "Cessna 180", "DHC-2 Beaver"]
+}
