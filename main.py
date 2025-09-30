@@ -151,94 +151,13 @@ class MLEducationGame:
 
     def _create_settings_menu(self):
         """Create the settings menu."""
-        custom_theme = self.menu.get_theme().copy()
-
-        self.settings_menu = pygame_menu.Menu(
-            title='Settings',
-            width=self.width,
-            height=self.height,
-            theme=custom_theme
-        )
-
-        # Ollama host URL input
-        self.settings_menu.add.text_input(
-            'Ollama Host: ',
-            default=game_data.ollama_host_url,
-            onchange=self._on_ollama_host_change,
-            maxchar=50
-        )
-
-        # Model selection
-        models = [
-            ('Gemma 3n (e4b) - Larger', True),
-            ('Gemma 3n (e2b) - Smaller', False)
-        ]
-        model_index = 0 if game_data.use_gemma3n_latest else 1
-        self.settings_menu.add.selector(
-            'Model: ',
-            models,
-            default=model_index,
-            onchange=self._on_model_change
-        )
-
-        self.settings_menu.add.vertical_margin(30)
-
-        # Save and back buttons
-        self.settings_menu.add.button('Test Connection', self._test_ollama_connection)
-        self.settings_menu.add.button('Save Settings', self._save_settings)
-        self.settings_menu.add.button('Back', pygame_menu.events.BACK)
+        # This method now does nothing - menu is created fresh each time
+        pass
 
     def _create_help_menu(self):
         """Create the help menu."""
-        custom_theme = self.menu.get_theme().copy()
-
-        self.help_menu = pygame_menu.Menu(
-            title='Help',
-            width=self.width,
-            height=self.height,
-            theme=custom_theme
-        )
-
-        help_text = [
-            "CONTROLS:",
-            "",
-            "In Menu:",
-            "  • Use ARROW KEYS to navigate",
-            "  • ENTER to select",
-            "  • ESC to go back",
-            "",
-            "In Conversation:",
-            "  • Type your message and press ENTER to send",
-            "  • ESC to return to menu",
-            "  • TAB to switch topics",
-            "  • F1 for help",
-            "",
-            "LEARNING TIPS:",
-            "",
-            "• Ask questions to explore concepts deeply",
-            "• Request detailed explanations of aircraft systems",
-            "• The instructor adapts to your aviation knowledge level",
-            "• Aircraft types build on each other - start with basics",
-            "",
-            "REQUIREMENTS:",
-            "",
-            "• Ollama must be running locally",
-            "• Gemma 3n model must be installed:",
-            "  ollama pull gemma3n:e4b"
-        ]
-
-        for line in help_text:
-            if line.startswith("  "):
-                self.help_menu.add.label(line, font_size=16, font_color=(160, 160, 180))
-            elif line == "":
-                self.help_menu.add.vertical_margin(10)
-            elif line.endswith(":"):
-                self.help_menu.add.label(line, font_size=20, font_color=(220, 220, 230))
-            else:
-                self.help_menu.add.label(line, font_size=18, font_color=(200, 200, 210))
-
-        self.help_menu.add.vertical_margin(30)
-        self.help_menu.add.button('Back', pygame_menu.events.BACK)
+        # This method now does nothing - menu is created fresh each time
+        pass
 
     def _create_travel_menu(self):
         """Create the travel menu for location selection."""
@@ -322,11 +241,102 @@ class MLEducationGame:
 
     def _show_settings(self):
         """Show settings menu."""
-        self.settings_menu.mainloop(self.screen)
+        # Create a completely fresh menu each time to avoid state issues
+        custom_theme = self.menu.get_theme().copy()
+
+        settings_menu = pygame_menu.Menu(
+            title='Settings',
+            width=self.width,
+            height=self.height,
+            theme=custom_theme
+        )
+
+        # Ollama host URL input
+        settings_menu.add.text_input(
+            'Ollama Host: ',
+            default=game_data.ollama_host_url,
+            onchange=self._on_ollama_host_change,
+            maxchar=50
+        )
+
+        # Model selection
+        models = [
+            ('Gemma 3n (e4b) - Larger', True),
+            ('Gemma 3n (e2b) - Smaller', False)
+        ]
+        model_index = 0 if game_data.use_gemma3n_latest else 1
+        settings_menu.add.selector(
+            'Model: ',
+            models,
+            default=model_index,
+            onchange=self._on_model_change
+        )
+
+        settings_menu.add.vertical_margin(30)
+
+        # Save and back buttons
+        settings_menu.add.button('Test Connection', self._test_ollama_connection)
+        settings_menu.add.button('Save Settings', self._save_settings)
+        settings_menu.add.button('Back', pygame_menu.events.BACK)
+
+        # Show the fresh menu
+        settings_menu.mainloop(self.screen)
 
     def _show_help_menu(self):
         """Show help menu."""
-        self.help_menu.mainloop(self.screen)
+        # Create a completely fresh menu each time to avoid state issues
+        custom_theme = self.menu.get_theme().copy()
+
+        help_menu = pygame_menu.Menu(
+            title='Help',
+            width=self.width,
+            height=self.height,
+            theme=custom_theme
+        )
+
+        help_text = [
+            "CONTROLS:",
+            "",
+            "In Menu:",
+            "  • Use ARROW KEYS to navigate",
+            "  • ENTER to select",
+            "  • ESC to go back",
+            "",
+            "In Conversation:",
+            "  • Type your message and press ENTER to send",
+            "  • ESC to return to menu",
+            "  • TAB to switch topics",
+            "  • F1 for help",
+            "",
+            "LEARNING TIPS:",
+            "",
+            "• Ask questions to explore concepts deeply",
+            "• Request detailed explanations of aircraft systems",
+            "• The instructor adapts to your aviation knowledge level",
+            "• Aircraft types build on each other - start with basics",
+            "",
+            "REQUIREMENTS:",
+            "",
+            "• Ollama must be running locally",
+            "• Gemma 3n model must be installed:",
+            "  ollama pull gemma3n:e4b"
+        ]
+
+        for line in help_text:
+            if line.startswith("  "):
+                help_menu.add.label(line, font_size=16, font_color=(160, 160, 180))
+            elif line == "":
+                help_menu.add.vertical_margin(10)
+            elif line.endswith(":"):
+                help_menu.add.label(line, font_size=20, font_color=(220, 220, 230))
+            else:
+                help_menu.add.label(line, font_size=18, font_color=(200, 200, 210))
+
+        help_menu.add.vertical_margin(30)
+        help_menu.add.button('Back', pygame_menu.events.BACK)
+
+        # Show the fresh menu
+        help_menu.mainloop(self.screen)
 
     def _show_travel_menu(self):
         """Show travel menu."""
