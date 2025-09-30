@@ -13,7 +13,9 @@ from core.educational_conversation import EducationalConversation
 from core.conversation import SignalType
 from core.ollama_service import Message
 from core.npc_system import npc_manager
+from core.flight_simulator import flight_simulator
 from ui.conversation_ui import ConversationUI
+from ui.flight_ui import FlightUI
 
 
 class MLEducationGame:
@@ -34,6 +36,7 @@ class MLEducationGame:
         # Game components
         self.conversation = EducationalConversation()
         self.ui = ConversationUI(self.screen)
+        self.flight_ui = FlightUI(self.screen)
 
         # Load NPC backstory
         self.npc_backstory = self._load_npc_backstory()
@@ -46,6 +49,7 @@ class MLEducationGame:
         self.awaiting_response = False
         self.show_menu = True
         self.current_submenu = None  # Track which submenu is active
+        self.is_flying = False  # Track flight simulation mode
 
         # Register signal handlers
         self._register_signal_handlers()
@@ -167,17 +171,32 @@ class MLEducationGame:
 
     def _travel_to_location(self, location_id: str):
         """Travel to selected location."""
-        location, npc = npc_manager.travel_to_location(location_id)
-        if location and npc:
-            # Show travel message
-            self._show_message(f"Traveled to {location.name}! Met {npc.name}")
-            # Close submenu and start conversation
-            self.current_submenu = None
-            self.show_menu = False
-            self.menu.disable()
-            self.start_conversation()
+        # Check if already at this location
+        if npc_manager.current_location and npc_manager.current_location.id == location_id:
+            self._show_message("Already at this location!")
+            return
+
+        # Get destination location
+        destination = next((loc for loc in npc_manager.locations if loc.id == location_id), None)
+        if not destination:
+            self._show_message("Location not found!")
+            return
+
+        # Start flight if we have a current location
+        if npc_manager.current_location:
+            # Show flight planning dialog
+            self._show_flight_planning_dialog(npc_manager.current_location, destination)
         else:
-            self._show_message("Travel failed - location not found")
+            # No current location, teleport directly
+            location, npc = npc_manager.travel_to_location(location_id)
+            if location and npc:
+                self._show_message(f"Arrived at {location.name}! Met {npc.name}")
+                self.current_submenu = None
+                self.show_menu = False
+                self.menu.disable()
+                self.start_conversation()
+            else:
+                self._show_message("Travel failed - location not found")
 
     def _on_subject_change(self, value, subject):
         """Handle subject change in menu."""
@@ -290,6 +309,119 @@ class MLEducationGame:
         self.current_submenu = None
         self.show_menu = True
         self.menu.enable()
+
+    def _end_flight(self):
+        """End current flight and arrive at destination."""
+        performance = flight_simulator.end_flight()
+
+        if performance.get('completed', False) or performance.get('final_progress', 0) > 80:
+            # Successful arrival - select NPC and start conversation
+            if hasattr(flight_simulator, 'current_flight') and flight_simulator.current_flight:
+                destination = flight_simulator.current_flight.destination
+                location, npc = npc_manager.travel_to_location(destination.id)
+                if location and npc:
+                    self._show_message(f"Arrived at {location.name}! Met {npc.name}")
+                    self.is_flying = False
+                    self.flight_ui.hide()
+                    self.start_conversation()
+                    return
+
+        # Failed flight or emergency landing - return to menu
+        self._show_message("Flight ended. Returning to menu.")
+        self.is_flying = False
+        self.flight_ui.hide()
+        self.show_menu = True
+        self.menu.enable()
+
+    def _show_flight_planning_dialog(self, departure, destination):
+        """Show flight planning dialog before starting flight."""
+        # Calculate flight plan
+        aircraft_type = game_data.educational_subject.name
+        flight_plan = flight_simulator.calculate_flight_plan(
+            departure,
+            destination,
+            aircraft_type
+        )
+
+        # Create flight planning menu
+        custom_theme = self.menu.get_theme().copy()
+
+        self.flight_planning_menu = pygame_menu.Menu(
+            title='Flight Planning',
+            width=self.width,
+            height=self.height,
+            theme=custom_theme
+        )
+
+        # Flight information
+        self.flight_planning_menu.add.label(f'From: {departure.name}', font_size=20)
+        self.flight_planning_menu.add.label(f'To: {destination.name}', font_size=20)
+        self.flight_planning_menu.add.vertical_margin(20)
+
+        self.flight_planning_menu.add.label(f'Aircraft: {aircraft_type.replace("_", " ").title()}', font_size=18)
+        self.flight_planning_menu.add.label(f'Distance: {flight_plan.distance_nm:.0f} nautical miles', font_size=16)
+        self.flight_planning_menu.add.label(f'Estimated Flight Time: {flight_plan.estimated_time_minutes // 60}h {flight_plan.estimated_time_minutes % 60}m', font_size=16)
+        self.flight_planning_menu.add.label(f'Cruise Altitude: {flight_plan.cruise_altitude:,} feet', font_size=16)
+        self.flight_planning_menu.add.label(f'Cruise Speed: {flight_plan.cruise_speed} knots', font_size=16)
+        self.flight_planning_menu.add.label(f'Fuel Required: {flight_plan.fuel_required:.1f} gallons', font_size=16)
+
+        self.flight_planning_menu.add.vertical_margin(30)
+
+        # Flight duration options
+        duration_options = [
+            ('Real-time flight (Desert Bus style)', 'real_time'),
+            ('Accelerated flight (5x speed)', 'accelerated'),
+            ('Quick travel (skip flight)', 'instant')
+        ]
+
+        self.flight_duration_selector = self.flight_planning_menu.add.selector(
+            'Flight Mode: ',
+            duration_options,
+            default=1,  # Default to accelerated
+            style="fancy"
+        )
+
+        self.flight_planning_menu.add.vertical_margin(20)
+
+        # Action buttons
+        self.flight_planning_menu.add.button('Start Flight', self._start_planned_flight, flight_plan)
+        self.flight_planning_menu.add.button('Cancel', self._back_to_main_menu)
+
+        # Set as current submenu
+        self.current_submenu = self.flight_planning_menu
+        self.show_menu = False
+
+    def _start_planned_flight(self, flight_plan):
+        """Start the planned flight based on selected options."""
+        # Get selected flight mode
+        duration_mode = self.flight_duration_selector.get_value()[0][1]
+
+        if duration_mode == 'instant':
+            # Skip flight simulation, arrive immediately
+            location, npc = npc_manager.travel_to_location(flight_plan.destination.id)
+            if location and npc:
+                self._show_message(f"Arrived at {location.name}! Met {npc.name}")
+                self.current_submenu = None
+                self.show_menu = False
+                self.menu.disable()
+                self.start_conversation()
+            return
+
+        # Set time acceleration based on mode
+        if duration_mode == 'accelerated':
+            # Modify flight plan for accelerated flight (5x speed)
+            flight_plan.estimated_time_minutes = flight_plan.estimated_time_minutes // 5
+
+        # Start flight simulation
+        if flight_simulator.start_flight(flight_plan):
+            self._show_message(f"Flying to {flight_plan.destination.name}...")
+            self.current_submenu = None
+            self.show_menu = False
+            self.is_flying = True
+            self.flight_ui.show()
+        else:
+            self._show_message("Failed to start flight!")
+            self._back_to_main_menu()
 
     def _show_help_menu(self):
         """Show help menu."""
@@ -540,6 +672,15 @@ class MLEducationGame:
                 # Handle ESC key to go back to main menu
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     self._back_to_main_menu()
+            elif self.is_flying:
+                # Handle flight simulation events
+                action = self.flight_ui.handle_event(event)
+                if action == "end_flight":
+                    self._end_flight()
+                elif action == "course_correction":
+                    pass  # Already handled by flight_ui
+                elif action == "autopilot_toggle":
+                    pass  # Already handled by flight_ui
             else:
                 # Handle conversation events
                 if event.type == pygame.KEYDOWN:
@@ -597,6 +738,14 @@ Ask about aircraft specifications, operations, or history!
         """Update game state."""
         if self.is_conversing:
             self.ui.update(dt)
+        elif self.is_flying:
+            # Update flight simulation
+            status = flight_simulator.update_flight(dt)
+            self.flight_ui.update(dt)
+
+            # Check if flight completed automatically
+            if not status['is_flying']:
+                self._end_flight()
 
     def draw(self):
         """Draw the game."""
@@ -604,6 +753,8 @@ Ask about aircraft specifications, operations, or history!
             self.menu.draw(self.screen)
         elif self.current_submenu:
             self.current_submenu.draw(self.screen)
+        elif self.is_flying:
+            self.flight_ui.draw()
         else:
             self.ui.draw()
 
