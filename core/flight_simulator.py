@@ -219,6 +219,14 @@ class FlightSimulator:
         self.engine_temp = 180
         self.fuel_remaining = 100.0
 
+        # Validate all numeric values to prevent NaN issues
+        if math.isnan(self.heading) or math.isinf(self.heading):
+            self.heading = 0.0
+        if math.isnan(self.target_heading) or math.isinf(self.target_heading):
+            self.target_heading = 0.0
+        if math.isnan(self.altitude) or math.isinf(self.altitude):
+            self.altitude = 0.0
+
         # Initialize position
         self.current_lat = flight_plan.departure.coordinates[0]
         self.current_lng = flight_plan.departure.coordinates[1]
@@ -259,6 +267,11 @@ class FlightSimulator:
 
         heading = math.atan2(y, x)
         heading = math.degrees(heading)
+
+        # Safeguard against NaN in initial heading calculation
+        if math.isnan(heading) or math.isinf(heading):
+            heading = 0.0
+
         return (heading + 360) % 360
 
     def update_flight(self, dt: float) -> Dict:
@@ -372,7 +385,17 @@ class FlightSimulator:
 
         # Apply drift to heading (much more reasonable)
         total_drift = base_drift + wind_effect
+
+        # Safeguard against NaN values
+        if math.isnan(total_drift) or math.isinf(total_drift):
+            total_drift = 0.0
+
         self.heading += total_drift
+
+        # Safeguard against NaN in heading
+        if math.isnan(self.heading) or math.isinf(self.heading):
+            self.heading = self.target_heading
+
         self.heading = self.heading % 360
 
         # Calculate how far off course we are
@@ -521,7 +544,16 @@ class FlightSimulator:
 
     def apply_course_correction(self, correction_degrees: float):
         """Apply course correction (player input)."""
+        # Safeguard against invalid inputs
+        if math.isnan(correction_degrees) or math.isinf(correction_degrees):
+            correction_degrees = 0.0
+
         self.heading += correction_degrees
+
+        # Safeguard against NaN in heading
+        if math.isnan(self.heading) or math.isinf(self.heading):
+            self.heading = self.target_heading
+
         self.heading = self.heading % 360
         self.last_correction_time = time.time()
 
@@ -560,6 +592,11 @@ class FlightSimulator:
                     correction = max(heading_error, -max_correction)
 
                 self.heading += correction
+
+                # Safeguard against NaN in autopilot correction
+                if math.isnan(self.heading) or math.isinf(self.heading):
+                    self.heading = self.target_heading
+
                 self.heading = self.heading % 360
 
         # === ENGINE TEMPERATURE MANAGEMENT VIA SPEED CONTROL ===
@@ -622,16 +659,23 @@ class FlightSimulator:
 
     def _get_status(self) -> Dict:
         """Get current flight status."""
+        # Safeguard against NaN values
+        heading = self.heading if not math.isnan(self.heading) else 0.0
+        target_heading = self.target_heading if not math.isnan(self.target_heading) else 0.0
+        altitude = self.altitude if not math.isnan(self.altitude) else 0.0
+        airspeed = self.airspeed if not math.isnan(self.airspeed) else 0.0
+        engine_temp = self.engine_temp if not math.isnan(self.engine_temp) else 180.0
+
         return {
             "is_flying": self.is_flying,
             "flight_phase": self.flight_phase.value if self.flight_phase else None,
             "elapsed_time": self.elapsed_time,
             "progress_percent": self.progress_percent,
-            "altitude": int(self.altitude),
-            "airspeed": int(self.airspeed),
-            "heading": int(self.heading),
-            "target_heading": int(self.target_heading),
-            "engine_temp": int(self.engine_temp),
+            "altitude": int(altitude),
+            "airspeed": int(airspeed),
+            "heading": int(heading),
+            "target_heading": int(target_heading),
+            "engine_temp": int(engine_temp),
             "fuel_remaining": self.fuel_remaining,
             "off_course_distance": self.off_course_distance,
             "system_alerts": self.system_alerts.copy(),
