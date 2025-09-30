@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional
 from enum import Enum
 from core.conversation import Conversation, Message
-from core.game_data import MLSubject, game_data
+from core.game_data import AircraftType, game_data
 
 
 class DifficultyLevel(Enum):
@@ -19,74 +19,71 @@ class EducationalConversation(Conversation):
         self.current_subject = game_data.educational_subject
 
     def get_subject_prompt(self) -> str:
-        """Get the initial system prompt for the current ML subject."""
+        """Get the initial system prompt for the current aircraft type."""
         prompts = {
-            MLSubject.SUPERVISED_LEARNING: """You are an expert ML educator teaching supervised learning.
+            AircraftType.SINGLE_ENGINE_PROPS: """You are an expert aviation educator teaching about single-engine propeller aircraft.
 Focus on:
-- Classification vs regression
-- Training data and labels
-- Common algorithms (decision trees, linear regression, SVM)
-- Real-world applications
-- Evaluation metrics (accuracy, precision, recall)
-Start with simple examples using everyday scenarios.""",
+- Common models (Cessna 172, Piper Cherokee, Beechcraft Bonanza)
+- Engine types and configurations
+- Flight characteristics and performance
+- Training and recreational uses
+- Maintenance and operational costs
+Start with popular training aircraft and their role in pilot education.""",
 
-            MLSubject.NEURAL_NETWORKS: """You are an expert ML educator teaching neural networks.
+            AircraftType.MULTI_ENGINE_PROPS: """You are an expert aviation educator teaching about multi-engine propeller aircraft.
 Focus on:
-- Neurons and activation functions
-- Layers and architectures
-- Forward propagation
-- Backpropagation basics
-- Simple perceptrons to deep networks
-Use visual analogies and simple math when needed.""",
+- Twin-engine configurations and safety
+- Engine-out procedures and training
+- Popular models (Beechcraft Baron, Piper Seneca)
+- Commercial and charter operations
+- Complex systems and instrument flying
+Use examples from real-world commercial operations.""",
 
-            MLSubject.TRAINING_VALIDATION: """You are an expert ML educator teaching training and validation.
+            AircraftType.JETS_COMMERCIAL: """You are an expert aviation educator teaching about commercial jet aircraft.
 Focus on:
-- Training, validation, and test sets
-- Cross-validation techniques
-- Data splitting strategies
-- Monitoring training progress
-- Early stopping
-- Batch vs epoch concepts
-Emphasize practical examples and common pitfalls.""",
+- Airliner families (Boeing 737, Airbus A320)
+- Turbofan engines and efficiency
+- Airline operations and scheduling
+- Passenger capacity and range
+- Modern avionics and automation
+Connect to passenger travel experiences.""",
 
-            MLSubject.LOSS_OPTIMIZATION: """You are an expert ML educator teaching loss functions and optimization.
+            AircraftType.JETS_MILITARY: """You are an expert aviation educator teaching about military jet aircraft.
 Focus on:
-- Common loss functions (MSE, cross-entropy)
-- Gradient descent and its variants
-- Learning rates and their impact
-- Optimization challenges
-- Convergence concepts
-Use intuitive explanations before mathematical details.""",
+- Fighter aircraft roles and missions
+- Military transport and cargo planes
+- Engine technology and performance
+- Stealth and advanced systems
+- Historical development and famous aircraft
+Use declassified information and airshow examples.""",
 
-            MLSubject.OVERFITTING_REGULARIZATION: """You are an expert ML educator teaching overfitting and regularization.
+            AircraftType.SEAPLANES_AMPHIBIANS: """You are an expert aviation educator teaching about seaplanes and amphibious aircraft.
 Focus on:
-- What is overfitting and underfitting
-- Bias-variance tradeoff
-- Regularization techniques (L1, L2, dropout)
-- Data augmentation
-- Model complexity
-- Validation curves
-Provide practical examples and visual descriptions.""",
+- Float plane configurations
+- Water operations and safety
+- Amphibious capabilities
+- Bush flying and remote access
+- Popular models (Cessna 208 Caravan, DHC Beaver)
+Emphasize unique operational environments.""",
 
-            MLSubject.MODEL_EVALUATION: """You are an expert ML educator teaching model evaluation.
+            AircraftType.HELICOPTERS_ROTORCRAFT: """You are an expert aviation educator teaching about helicopters and rotorcraft.
 Focus on:
-- Confusion matrices
-- ROC curves and AUC
-- Precision, recall, F1-score
-- Cross-validation scores
-- A/B testing for ML
-- Performance monitoring
-Connect metrics to real-world impact and decision-making."""
+- Rotor systems and flight principles
+- Helicopter vs airplane differences
+- Emergency medical and rescue operations
+- Military and civilian roles
+- Autorotation and unique capabilities
+Use rescue and utility operation examples."""
         }
 
-        base_prompt = prompts.get(self.current_subject, prompts[MLSubject.SUPERVISED_LEARNING])
+        base_prompt = prompts.get(self.current_subject, prompts[AircraftType.SINGLE_ENGINE_PROPS])
 
         return f"""{base_prompt}
 
 You are teaching {game_data.player_name} ({game_data.player_pronouns}).
 Adapt your teaching to their responses - if they show understanding, gradually increase complexity.
-Use the Socratic method, asking questions to guide learning.
-Provide hands-on exercises and coding examples when appropriate.
+Use the Socratic method, asking questions to guide aviation learning.
+Provide hands-on aircraft walkarounds and operational examples when appropriate.
 Always be encouraging and patient.
 
 Current difficulty level: {self.difficulty_level.value}"""
@@ -103,61 +100,63 @@ Current difficulty level: {self.difficulty_level.value}"""
     def get_initial_greeting(self) -> str:
         """Get subject-specific initial greeting."""
         greetings = {
-            MLSubject.SUPERVISED_LEARNING:
-                f"Hello {game_data.player_name}! Welcome to our machine learning journey. "
-                "Today we'll explore supervised learning - the foundation of many ML applications. "
-                "Think of it like learning with a teacher who shows you examples and correct answers. "
-                "What's your experience with machine learning so far?",
+            AircraftType.SINGLE_ENGINE_PROPS:
+                f"Welcome to the flight line, {game_data.player_name}! "
+                "We're at a busy general aviation airport where single-engine aircraft are the backbone of flight training. "
+                "These trusty machines have taught countless pilots to fly. "
+                "What draws you to single-engine propeller aircraft?",
 
-            MLSubject.NEURAL_NETWORKS:
-                f"Hi {game_data.player_name}! Ready to dive into the fascinating world of neural networks? "
-                "These are computing systems inspired by the human brain. "
-                "We'll start simple and build up your understanding step by step. "
-                "Have you heard about neural networks before, or is this your first encounter?",
+            AircraftType.MULTI_ENGINE_PROPS:
+                f"Greetings {game_data.player_name}! Welcome to the twin-engine hangar. "
+                "Multi-engine propeller aircraft represent a step up in complexity and capability. "
+                "They're the workhorses of charter operations and advanced pilot training. "
+                "Have you had any experience with twin-engine aircraft before?",
 
-            MLSubject.TRAINING_VALIDATION:
-                f"Welcome {game_data.player_name}! Today we're focusing on a crucial aspect of ML: "
-                "training and validation. It's like preparing for an exam - you study (train) "
-                "and take practice tests (validate) before the real test. "
-                "What do you think is the biggest challenge when training ML models?",
+            AircraftType.JETS_COMMERCIAL:
+                f"Hello {game_data.player_name}! Welcome aboard our tour of commercial aviation. "
+                "We're at a major airport where these magnificent jets connect the world. "
+                "From regional jets to wide-body airliners, each has a story to tell. "
+                "What's your experience with commercial aviation as a passenger or enthusiast?",
 
-            MLSubject.LOSS_OPTIMIZATION:
-                f"Hello {game_data.player_name}! Let's explore loss functions and optimization - "
-                "the engine that makes machine learning work. Think of it as teaching a model "
-                "to get better by showing it how wrong it is and how to improve. "
-                "Have you worked with any optimization problems before?",
+            AircraftType.JETS_MILITARY:
+                f"Welcome {game_data.player_name}! Today we're exploring military aviation at this air base. "
+                "From supersonic fighters to massive cargo haulers, military aircraft push the boundaries of technology. "
+                "These machines defend nations and project power across the globe. "
+                "What aspects of military aviation interest you most?",
 
-            MLSubject.OVERFITTING_REGULARIZATION:
-                f"Hi {game_data.player_name}! Today's topic is overfitting and regularization. "
-                "Imagine memorizing answers vs understanding concepts - that's the challenge we'll tackle. "
-                "Have you ever trained a model that performed great on training data but poorly on new data?",
+            AircraftType.SEAPLANES_AMPHIBIANS:
+                f"Hello {game_data.player_name}! Welcome to this unique seaplane base. "
+                "Here, aircraft operate from both water and land, opening up remote destinations. "
+                "Seaplanes and amphibians are aviation's adventurers, reaching places others cannot. "
+                "Have you ever experienced flight operations from water?",
 
-            MLSubject.MODEL_EVALUATION:
-                f"Welcome {game_data.player_name}! Let's learn about model evaluation - "
-                "how we measure if our ML models are actually good. It's not just about accuracy! "
-                "What metrics do you think are important when evaluating a machine learning model?"
+            AircraftType.HELICOPTERS_ROTORCRAFT:
+                f"Welcome {game_data.player_name}! You're at a helicopter base where rotorcraft demonstrate unique capabilities. "
+                "Unlike fixed-wing aircraft, helicopters can hover, land anywhere, and perform vertical operations. "
+                "From life-saving rescues to precision construction work, they're aviation's workhorses. "
+                "What fascinates you about helicopter flight?"
         }
 
-        return greetings.get(self.current_subject, greetings[MLSubject.SUPERVISED_LEARNING])
+        return greetings.get(self.current_subject, greetings[AircraftType.SINGLE_ENGINE_PROPS])
 
     def analyze_response_complexity(self, response: str) -> Dict:
         """Analyze user response to adjust difficulty."""
         words = response.split()
         word_count = len(words)
 
-        # Check for ML terminology
-        ml_terms = {
-            'beginner': ['model', 'data', 'train', 'test', 'predict', 'accuracy'],
-            'intermediate': ['validation', 'overfitting', 'gradient', 'epoch', 'batch',
-                           'regularization', 'hyperparameter', 'cross-validation'],
-            'advanced': ['backpropagation', 'convolution', 'embedding', 'attention',
-                        'transformer', 'gan', 'reinforcement', 'bayesian', 'ensemble']
+        # Check for aviation terminology
+        aviation_terms = {
+            'beginner': ['aircraft', 'propeller', 'engine', 'wing', 'cockpit', 'runway'],
+            'intermediate': ['avionics', 'turbine', 'navigation', 'instruments', 'performance',
+                           'certification', 'maintenance', 'weather'],
+            'advanced': ['aerodynamics', 'turbofan', 'autopilot', 'pressurization',
+                        'approach', 'systems', 'regulations', 'operations']
         }
 
         complexity_score = 0
         detected_terms = []
 
-        for level, terms in ml_terms.items():
+        for level, terms in aviation_terms.items():
             for term in terms:
                 if term.lower() in response.lower():
                     detected_terms.append(term)
@@ -206,47 +205,47 @@ Current difficulty level: {self.difficulty_level.value}"""
     def get_suggested_topics(self) -> List[str]:
         """Get suggested topics based on current subject and progress."""
         topic_suggestions = {
-            MLSubject.SUPERVISED_LEARNING: [
-                "Linear regression basics",
-                "Classification algorithms",
-                "Feature engineering",
-                "Train-test splitting",
-                "Model selection"
+            AircraftType.SINGLE_ENGINE_PROPS: [
+                "Cessna 172 characteristics",
+                "Engine operation basics",
+                "Pre-flight inspection",
+                "Traffic pattern procedures",
+                "Landing techniques"
             ],
-            MLSubject.NEURAL_NETWORKS: [
-                "Perceptron model",
-                "Activation functions",
-                "Multi-layer networks",
-                "Convolutional layers",
-                "Recurrent networks"
+            AircraftType.MULTI_ENGINE_PROPS: [
+                "Twin-engine safety",
+                "Engine-out procedures",
+                "Beechcraft Baron systems",
+                "Complex aircraft operations",
+                "Multi-engine training"
             ],
-            MLSubject.TRAINING_VALIDATION: [
-                "K-fold cross-validation",
-                "Stratified sampling",
-                "Validation curves",
-                "Learning curves",
-                "Hyperparameter tuning"
+            AircraftType.JETS_COMMERCIAL: [
+                "Boeing 737 family",
+                "Airbus A320 systems",
+                "Turbofan engine operation",
+                "Airline operations",
+                "Modern avionics"
             ],
-            MLSubject.LOSS_OPTIMIZATION: [
-                "Mean squared error",
-                "Cross-entropy loss",
-                "Gradient descent",
-                "Adam optimizer",
-                "Learning rate scheduling"
+            AircraftType.JETS_MILITARY: [
+                "Fighter aircraft roles",
+                "Military transport planes",
+                "Stealth technology",
+                "Air combat systems",
+                "Historic military aircraft"
             ],
-            MLSubject.OVERFITTING_REGULARIZATION: [
-                "L1 and L2 regularization",
-                "Dropout technique",
-                "Early stopping",
-                "Data augmentation",
-                "Ensemble methods"
+            AircraftType.SEAPLANES_AMPHIBIANS: [
+                "Float plane operations",
+                "Water landing techniques",
+                "DHC Beaver capabilities",
+                "Bush flying operations",
+                "Amphibious conversions"
             ],
-            MLSubject.MODEL_EVALUATION: [
-                "Confusion matrix",
-                "ROC and AUC",
-                "Precision vs recall",
-                "F1 score",
-                "Cross-validation metrics"
+            AircraftType.HELICOPTERS_ROTORCRAFT: [
+                "Rotor system design",
+                "Autorotation procedures",
+                "Medical helicopter operations",
+                "Helicopter vs airplane flight",
+                "Unique helicopter capabilities"
             ]
         }
 
@@ -260,28 +259,28 @@ Current difficulty level: {self.difficulty_level.value}"""
         """Create a practice exercise based on current topic and difficulty."""
         exercises = {
             DifficultyLevel.BEGINNER: {
-                MLSubject.SUPERVISED_LEARNING:
-                    "Let's practice: Given a dataset of house prices with features like size and location, "
-                    "which type of supervised learning would you use - classification or regression? Why?",
-                MLSubject.NEURAL_NETWORKS:
-                    "Exercise: Draw or describe a simple neural network with 2 input neurons, "
-                    "3 hidden neurons, and 1 output neuron. What could this network be used for?"
+                AircraftType.SINGLE_ENGINE_PROPS:
+                    "Let's practice: You're looking at a Cessna 172 and a Piper Cherokee. "
+                    "What are the key differences you would look for during a pre-flight inspection?",
+                AircraftType.JETS_COMMERCIAL:
+                    "Exercise: Explain why commercial jets have turbofan engines instead of propellers. "
+                    "What advantages do turbofans provide for airline operations?"
             },
             DifficultyLevel.INTERMEDIATE: {
-                MLSubject.SUPERVISED_LEARNING:
-                    "Challenge: You have a dataset with 1000 samples. How would you split it for "
-                    "training and testing? What problems might arise with a 50-50 split?",
-                MLSubject.NEURAL_NETWORKS:
-                    "Exercise: If you have a network that always predicts the same output regardless "
-                    "of input, what might be wrong? Consider activation functions and weight initialization."
+                AircraftType.MULTI_ENGINE_PROPS:
+                    "Challenge: You're flying a twin-engine aircraft and one engine fails. "
+                    "What immediate actions would the pilot take? Why is engine-out training so important?",
+                AircraftType.HELICOPTERS_ROTORCRAFT:
+                    "Exercise: Describe the principle of autorotation in helicopters. "
+                    "How does this safety feature allow helicopters to land without engine power?"
             },
             DifficultyLevel.ADVANCED: {
-                MLSubject.SUPERVISED_LEARNING:
-                    "Advanced exercise: Design a multi-class classification pipeline including "
-                    "feature preprocessing, model selection, and evaluation strategy for imbalanced classes.",
-                MLSubject.NEURAL_NETWORKS:
-                    "Challenge: Explain how you would implement a custom loss function for a neural network "
-                    "that penalizes false negatives more than false positives."
+                AircraftType.JETS_MILITARY:
+                    "Advanced exercise: Compare the design philosophy of a fighter jet like the F-22 "
+                    "versus a cargo aircraft like the C-130. How do their missions drive different designs?",
+                AircraftType.SEAPLANES_AMPHIBIANS:
+                    "Challenge: Design considerations for seaplane operations - what unique challenges "
+                    "do water operations present compared to traditional runway operations?"
             }
         }
 

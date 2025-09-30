@@ -1,16 +1,16 @@
-# ML Education Game with Local LLM
+# Aircraft Education Game with Local LLM
 
-An interactive educational game that teaches machine learning fundamentals using a local LLM (Gemma 3n) via Ollama. Now featuring modern UI with pygame_gui and pygame-menu!
+An interactive educational game that teaches about different aircraft types using a local LLM (Gemma 3n) via Ollama. Explore aviation at airports worldwide! Now featuring modern UI with pygame_gui and pygame-menu!
 
 ## Features
 
-- **6 ML Learning Topics:**
-  - Supervised Learning
-  - Neural Networks
-  - Training and Validation
-  - Loss Functions and Optimization
-  - Overfitting and Regularization
-  - Model Evaluation Metrics
+- **6 Aircraft Learning Topics:**
+  - Single-Engine Propeller Aircraft
+  - Multi-Engine Propeller Aircraft
+  - Commercial Jet Aircraft
+  - Military Jet Aircraft
+  - Seaplanes & Amphibious Aircraft
+  - Helicopters & Rotorcraft
 
 - **Modern UI with pygame_gui and pygame-menu:**
   - Professional menu system with settings
@@ -73,7 +73,7 @@ python3 main.py
 ### In Conversation:
 - **Type & Enter**: Send message
 - **ESC**: Return to menu
-- **TAB**: Switch ML topics
+- **TAB**: Switch aircraft types
 - **F1**: Show help
 
 ## New GUI Features
@@ -145,12 +145,12 @@ The refactoring with pygame_gui and pygame-menu achieved:
 
 ## Educational Approach
 
-The game uses Dr. Maya Chen, a virtual ML educator, who:
-- Adapts teaching to your understanding level
-- Uses real-world examples and analogies
-- Provides hands-on coding exercises
-- Tracks your progress across sessions
-- Celebrates achievements and breakthroughs
+The game uses Captain Sarah "Sky" Mitchell, a veteran pilot and aviation educator, who:
+- Adapts teaching to your aviation knowledge level
+- Uses real-world flying experiences and examples
+- Provides hands-on aircraft walkarounds and explanations
+- Tracks your progress across different aircraft types
+- Celebrates aviation milestones and achievements
 
 ## License
 

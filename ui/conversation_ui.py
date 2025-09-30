@@ -40,7 +40,7 @@ class ConversationUI:
 
         # Create conversation display (scrollable text box)
         self.conversation_box = pygame_gui.elements.UITextBox(
-            html_text="<b>ML Education Session</b><br><br>Press SPACE in the menu to start learning!",
+            html_text="<b>Aircraft Education Session</b><br><br>Press SPACE in the menu to start learning!",
             relative_rect=pygame.Rect(20, 20, self.width - 40, self.height - 200),
             manager=self.manager,
             wrap_to_height=False
@@ -77,7 +77,7 @@ class ConversationUI:
 
         self.subject_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(10, 40, self.width - 60, 30),
-            text="Subject: Supervised Learning",
+            text="Subject: Single-Engine Propeller Aircraft",
             manager=self.manager,
             container=self.progress_panel
         )
@@ -100,7 +100,7 @@ class ConversationUI:
         if role == "user":
             formatted = f'<font color="#6496FA"><b>[You]</b></font> {self._escape_html(content)}'
         elif role == "assistant":
-            formatted = f'<font color="#96FA96"><b>[ML Tutor]</b></font> {self._escape_html(content)}'
+            formatted = f'<font color="#96FA96"><b>[Aviation Instructor]</b></font> {self._escape_html(content)}'
         elif role == "system":
             formatted = f'<font color="#FAC864"><b>[System]</b></font> {self._escape_html(content)}'
         else:

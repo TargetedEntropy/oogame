@@ -5,13 +5,13 @@ from enum import IntEnum
 from typing import Optional
 
 
-class MLSubject(IntEnum):
-    SUPERVISED_LEARNING = 0
-    NEURAL_NETWORKS = 1
-    TRAINING_VALIDATION = 2
-    LOSS_OPTIMIZATION = 3
-    OVERFITTING_REGULARIZATION = 4
-    MODEL_EVALUATION = 5
+class AircraftType(IntEnum):
+    SINGLE_ENGINE_PROPS = 0      # Cessna, Piper Cherokee, etc.
+    MULTI_ENGINE_PROPS = 1       # Twin engine aircraft
+    JETS_COMMERCIAL = 2          # Airliners, regional jets
+    JETS_MILITARY = 3            # Fighter jets, cargo planes
+    SEAPLANES_AMPHIBIANS = 4     # Float planes, flying boats
+    HELICOPTERS_ROTORCRAFT = 5   # Helicopters, autogyros
 
 
 class GameData:
@@ -25,11 +25,11 @@ class GameData:
 
     def __init__(self):
         if not self._initialized:
-            self.config_dir = Path.home() / ".ml_education_game"
+            self.config_dir = Path.home() / ".aircraft_education_game"
             self.config_file = self.config_dir / "settings.json"
 
             self.ollama_host_url = "http://localhost:11434"
-            self.educational_subject = MLSubject.SUPERVISED_LEARNING
+            self.educational_subject = AircraftType.SINGLE_ENGINE_PROPS
             self.use_gemma3n_latest = True
             self.player_name = "Learner"
             self.player_pronouns = "they/them"
@@ -46,14 +46,14 @@ class GameData:
     def get_subject_name(self) -> str:
         """Get the current educational subject name."""
         subject_names = {
-            MLSubject.SUPERVISED_LEARNING: "Supervised Learning",
-            MLSubject.NEURAL_NETWORKS: "Neural Networks",
-            MLSubject.TRAINING_VALIDATION: "Training and Validation",
-            MLSubject.LOSS_OPTIMIZATION: "Loss Functions and Optimization",
-            MLSubject.OVERFITTING_REGULARIZATION: "Overfitting and Regularization",
-            MLSubject.MODEL_EVALUATION: "Model Evaluation Metrics"
+            AircraftType.SINGLE_ENGINE_PROPS: "Single-Engine Propeller Aircraft",
+            AircraftType.MULTI_ENGINE_PROPS: "Multi-Engine Propeller Aircraft",
+            AircraftType.JETS_COMMERCIAL: "Commercial Jet Aircraft",
+            AircraftType.JETS_MILITARY: "Military Jet Aircraft",
+            AircraftType.SEAPLANES_AMPHIBIANS: "Seaplanes & Amphibious Aircraft",
+            AircraftType.HELICOPTERS_ROTORCRAFT: "Helicopters & Rotorcraft"
         }
-        return subject_names.get(self.educational_subject, "Machine Learning")
+        return subject_names.get(self.educational_subject, "Aircraft Education")
 
     def save_settings(self):
         """Save settings to JSON file."""
@@ -78,7 +78,7 @@ class GameData:
                     settings = json.load(f)
 
                 self.ollama_host_url = settings.get("ollama_host_url", self.ollama_host_url)
-                self.educational_subject = MLSubject(settings.get("educational_subject", 0))
+                self.educational_subject = AircraftType(settings.get("educational_subject", 0))
                 self.use_gemma3n_latest = settings.get("use_gemma3n_latest", True)
                 self.player_name = settings.get("player_name", "Learner")
                 self.player_pronouns = settings.get("player_pronouns", "they/them")
@@ -89,7 +89,7 @@ class GameData:
     def reset_to_defaults(self):
         """Reset all settings to default values."""
         self.ollama_host_url = "http://localhost:11434"
-        self.educational_subject = MLSubject.SUPERVISED_LEARNING
+        self.educational_subject = AircraftType.SINGLE_ENGINE_PROPS
         self.use_gemma3n_latest = True
         self.player_name = "Learner"
         self.player_pronouns = "they/them"

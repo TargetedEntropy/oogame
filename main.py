@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Optional
 
-from core.game_data import game_data, MLSubject
+from core.game_data import game_data, AircraftType
 from core.educational_conversation import EducationalConversation
 from core.conversation import SignalType
 from core.ollama_service import Message
@@ -23,7 +23,7 @@ class MLEducationGame:
         self.width = 1024
         self.height = 768
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("ML Education with Local LLM")
+        pygame.display.set_caption("Aircraft Education with Local LLM")
 
         # Clock for FPS control
         self.clock = pygame.time.Clock()
@@ -67,7 +67,7 @@ class MLEducationGame:
 
         # Create main menu
         self.menu = pygame_menu.Menu(
-            title='ML Education with Local LLM',
+            title='Aircraft Education with Local LLM',
             width=self.width,
             height=self.height,
             theme=custom_theme
@@ -81,7 +81,7 @@ class MLEducationGame:
 
         # Subject selector
         subjects = [(subject.name.replace('_', ' ').title(), subject)
-                   for subject in MLSubject]
+                   for subject in AircraftType]
         self.subject_selector = self.menu.add.selector(
             'Select Topic: ',
             subjects,
@@ -211,9 +211,9 @@ class MLEducationGame:
             "LEARNING TIPS:",
             "",
             "• Ask questions to explore concepts deeply",
-            "• Request coding examples when needed",
-            "• The tutor adapts to your understanding level",
-            "• Topics build on each other - start with basics",
+            "• Request detailed explanations of aircraft systems",
+            "• The instructor adapts to your aviation knowledge level",
+            "• Aircraft types build on each other - start with basics",
             "",
             "REQUIREMENTS:",
             "",
@@ -464,15 +464,17 @@ class MLEducationGame:
 Controls:
 - Type your message and press Enter to send
 - ESC: Return to menu
-- TAB: Switch ML topics
+- TAB: Switch aircraft types
 - F1: Show this help
+
+Ask about aircraft specifications, operations, or history!
         """
         self.ui.add_message("system", help_text)
 
     def switch_subject(self):
-        """Switch to next ML subject."""
+        """Switch to next aircraft type."""
         current = game_data.educational_subject
-        subjects = list(MLSubject)
+        subjects = list(AircraftType)
         current_idx = subjects.index(current)
         next_idx = (current_idx + 1) % len(subjects)
         game_data.educational_subject = subjects[next_idx]
