@@ -465,7 +465,11 @@ class FlightSimulator:
         dist_from_dep = self._calculate_distance(
             dep_lat, dep_lng, self.current_lat, self.current_lng
         )
-        self.progress_percent = min(100, (dist_from_dep / total_distance) * 100)
+        # Protect against division by zero for zero-distance flights
+        if total_distance > 0:
+            self.progress_percent = min(100, (dist_from_dep / total_distance) * 100)
+        else:
+            self.progress_percent = 100  # Already at destination
 
     def _calculate_distance(
         self, lat1: float, lng1: float, lat2: float, lng2: float

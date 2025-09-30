@@ -1,0 +1,22 @@
+# Development and testing requirements
+-r requirements.txt
+
+# Additional development tools
+pre-commit>=3.0.0
+tox>=4.0.0
+sphinx>=6.0.0
+sphinx-rtd-theme>=1.2.0
+
+# IDE support
+python-lsp-server>=1.7.0
+pylsp-mypy>=0.6.0
+rope>=1.7.0
+
+# Debugging tools
+ipython>=8.10.0
+ipdb>=0.13.0
+pdbpp>=0.10.0
+
+# Documentation
+mkdocs>=1.4.0
+mkdocs-material>=9.0.0

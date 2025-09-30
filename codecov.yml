@@ -1,0 +1,78 @@
+# Codecov configuration
+codecov:
+  require_ci_to_pass: true
+  notify:
+    after_n_builds: 2
+    wait_for_ci: true
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 1%
+        base: auto
+        flags:
+          - unittests
+        paths:
+          - "core/"
+          - "ui/"
+          - "main.py"
+
+    patch:
+      default:
+        target: 85%
+        threshold: 1%
+        base: auto
+
+    changes:
+      default:
+        target: auto
+        threshold: 1%
+        base: auto
+
+  flags:
+    unittests:
+      paths:
+        - core/
+        - ui/
+        - main.py
+      carryforward: true
+
+    flight-simulator:
+      paths:
+        - core/flight_simulator.py
+      target: 90%
+      threshold: 1%
+      carryforward: true
+
+    ui-components:
+      paths:
+        - ui/
+      target: 60%
+      threshold: 5%
+      carryforward: true
+
+  ignore:
+    - "tests/"
+    - "**/__pycache__/"
+    - "**/venv/"
+    - "**/.venv/"
+    - ".coverage"
+    - "htmlcov/"
+    - "setup.py"
+    - "conftest.py"
+
+comment:
+  layout: "reach,diff,flags,tree,footer"
+  behavior: default
+  require_changes: false
+  require_base: no
+  require_head: yes
+
+github_checks:
+  annotations: true

@@ -1,0 +1,199 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install linting dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black isort mypy pylint bandit safety
+
+    - name: Run Black (Code Formatting)
+      run: |
+        black --check --diff core/ ui/ tests/ main.py || true
+
+    - name: Run isort (Import Sorting)
+      run: |
+        isort --check-only --diff core/ ui/ tests/ main.py || true
+
+    - name: Run Flake8 (Style Guide)
+      run: |
+        flake8 core/ ui/ tests/ main.py \
+          --max-line-length=100 \
+          --exclude=__pycache__,venv,.git \
+          --ignore=E203,W503 || true
+
+    - name: Run MyPy (Type Checking)
+      run: |
+        mypy core/ ui/ main.py \
+          --ignore-missing-imports \
+          --disallow-untyped-defs \
+          --no-strict-optional || true
+
+    - name: Run Pylint (Code Analysis)
+      run: |
+        pylint core/ ui/ main.py \
+          --disable=missing-docstring,too-few-public-methods,import-error \
+          --max-line-length=100 || true
+
+    - name: Run Bandit (Security Analysis)
+      run: |
+        bandit -r core/ ui/ main.py \
+          -f json \
+          -o bandit-report.json || true
+
+    - name: Run Safety (Dependency Security)
+      run: |
+        safety check \
+          --json \
+          --output safety-report.json || true
+
+    - name: Upload Security Reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+        retention-days: 30
+
+  test-import:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install minimal dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+
+    - name: Test Core Module Imports
+      run: |
+        # Test that core modules can be imported without pygame
+        python -c "
+        import sys
+        sys.path.insert(0, '.')
+
+        # Test flight simulator import
+        try:
+            from core.flight_simulator import FlightSimulator, FlightPlan, FlightPhase
+            print('✅ Flight simulator imports successfully')
+        except Exception as e:
+            print(f'❌ Flight simulator import failed: {e}')
+            sys.exit(1)
+
+        # Test conversation imports
+        try:
+            from core.conversation import Conversation, SignalType
+            print('✅ Conversation imports successfully')
+        except Exception as e:
+            print(f'⚠️  Conversation import warning: {e}')
+
+        # Test NPC system imports
+        try:
+            from core.npc_system import NPCManager, Location, LocationType
+            print('✅ NPC system imports successfully')
+        except Exception as e:
+            print(f'⚠️  NPC system import warning: {e}')
+        "
+
+  performance-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-benchmark memory_profiler
+
+    - name: Run Performance Tests
+      run: |
+        # Create performance test for flight simulator
+        cat > test_performance.py << 'EOF'
+        import pytest
+        import time
+        import sys
+        import os
+
+        sys.path.insert(0, '.')
+        from core.flight_simulator import FlightSimulator, FlightPlan
+
+        class MockLocation:
+            def __init__(self, name, coordinates):
+                self.name = name
+                self.coordinates = coordinates
+
+        def test_flight_simulator_performance():
+            """Test flight simulator performance under load."""
+            simulator = FlightSimulator()
+
+            departure = MockLocation("Test A", (40.0, -74.0))
+            destination = MockLocation("Test B", (41.0, -75.0))
+
+            flight_plan = FlightPlan(
+                departure=departure,
+                destination=destination,
+                aircraft_type="SINGLE_ENGINE_PROPS",
+                distance_nm=100.0,
+                estimated_time_minutes=60,
+                cruise_altitude=6500,
+                cruise_speed=120,
+                fuel_required=120.0
+            )
+
+            # Test initialization performance
+            start_time = time.time()
+            simulator.start_flight(flight_plan)
+            init_time = time.time() - start_time
+
+            assert init_time < 0.1, f"Flight initialization took {init_time:.3f}s (should be <0.1s)"
+
+            # Test update performance
+            start_time = time.time()
+            for _ in range(100):
+                simulator.update_flight(1.0)
+            update_time = time.time() - start_time
+
+            assert update_time < 1.0, f"100 updates took {update_time:.3f}s (should be <1.0s)"
+
+            print(f"✅ Performance test passed: init={init_time:.3f}s, 100 updates={update_time:.3f}s")
+
+        if __name__ == "__main__":
+            test_flight_simulator_performance()
+        EOF
+
+        python test_performance.py
