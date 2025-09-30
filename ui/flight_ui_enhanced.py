@@ -510,16 +510,23 @@ class FlightUIEnhanced:
         x_offset += 200
         self._draw_progress_bar(x_offset, y - 10, 300, 20, status['progress_percent'])
 
-        # Autopilot status
+        # Autopilot status with details
         x_offset += 320
         if flight_simulator.autopilot_enabled:
             auto_text = self.fonts['medium'].render("AUTOPILOT ON", True, self.colors['normal'])
             # Add blinking effect
             if self.animations['beacon_flash'] > 1:
                 self.screen.blit(auto_text, (x_offset, y - auto_text.get_height() // 2))
+
+            # Show what autopilot is managing
+            if self.animations['beacon_flash'] > 1:  # Only show when main text is visible
+                detail_text = self.fonts['tiny'].render("HDG + TEMP MGMT", True, self.colors['text_secondary'])
+                self.screen.blit(detail_text, (x_offset, y + 8))
         else:
             auto_text = self.fonts['medium'].render("MANUAL", True, self.colors['text_dim'])
             self.screen.blit(auto_text, (x_offset, y - auto_text.get_height() // 2))
+            detail_text = self.fonts['tiny'].render("FULL CONTROL", True, self.colors['text_dim'])
+            self.screen.blit(detail_text, (x_offset, y + 8))
 
     def _draw_primary_flight_display(self, status):
         """Draw the primary flight display with attitude indicator and key instruments."""

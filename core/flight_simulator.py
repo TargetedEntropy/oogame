@@ -331,11 +331,13 @@ class FlightSimulator:
 
     def _apply_drift_mechanics(self, dt: float):
         """Apply Desert Bus style drift mechanics - BALANCED VERSION."""
-        # Much gentler drift - should be correctable with occasional input
-        base_drift = self.drift_rate * dt * 0.5  # Reduced by half
+        # Base drift rate - reduced when autopilot is active
+        drift_multiplier = 0.3 if self.autopilot_enabled else 0.5  # Autopilot reduces drift effect
+        base_drift = self.drift_rate * dt * drift_multiplier
 
-        # Gentle wind effect
-        wind_effect = self.current_weather.crosswind_component * 0.02 * dt  # Reduced from 0.1
+        # Wind effect - also reduced with autopilot
+        wind_multiplier = 0.01 if self.autopilot_enabled else 0.02
+        wind_effect = self.current_weather.crosswind_component * wind_multiplier * dt
 
         # Apply drift to heading (much more reasonable)
         total_drift = base_drift + wind_effect
@@ -347,12 +349,20 @@ class FlightSimulator:
         if heading_error > 180:
             heading_error = 360 - heading_error
 
-        # Much more forgiving thresholds
-        if heading_error > 20:  # Increased from 10 degrees
-            self.off_course_distance += 0.05 * dt  # Reduced penalty
-            if heading_error > 45:  # Increased from 20 degrees
+        # More forgiving thresholds, especially with autopilot
+        warning_threshold = 30 if self.autopilot_enabled else 20
+        critical_threshold = 60 if self.autopilot_enabled else 45
+
+        if heading_error > warning_threshold:
+            self.off_course_distance += 0.03 * dt  # Further reduced penalty
+            if heading_error > critical_threshold:
                 self.course_deviations += 1
-                self.system_alerts.append("Course deviation warning")
+                if not self.autopilot_enabled:
+                    self.system_alerts.append("Course deviation warning")
+                else:
+                    # Only warn if autopilot is struggling significantly
+                    if heading_error > 90:
+                        self.system_alerts.append("Autopilot course correction")
 
     def _update_position(self, dt: float):
         """Update aircraft position based on speed and heading."""
@@ -396,26 +406,52 @@ class FlightSimulator:
 
     def _check_systems(self):
         """Check aircraft systems for issues."""
-        # Much more stable engine temperature
+        # Engine temperature based on speed and phase
+        target_temp_base = 180  # Base operating temperature
+
+        # Calculate target temperature based on current conditions
         if self.flight_phase in [FlightPhase.TAKEOFF, FlightPhase.CLIMB]:
-            self.engine_temp += random.uniform(-1, 2)  # Reduced variation
+            target_temp_base = 200  # Higher temp during climb
+
+        # Speed affects temperature - higher speed = higher temp
+        if self.current_flight:
+            cruise_speed = self.current_flight.cruise_speed
+            speed_factor = self.airspeed / cruise_speed
+            target_temp = target_temp_base + (speed_factor - 1) * 40  # Speed impact
         else:
-            self.engine_temp += random.uniform(-1, 1)  # Much more stable
+            target_temp = target_temp_base
+
+        # Temperature gradually moves toward target
+        temp_diff = target_temp - self.engine_temp
+        temp_change_rate = 2.0  # degrees per second
+
+        # Add some random variation
+        temp_change = temp_diff * 0.1 + random.uniform(-0.5, 0.5)
+
+        self.engine_temp += temp_change
 
         # Keep temperature in reasonable range
         self.engine_temp = max(160, min(250, self.engine_temp))
 
-        if self.engine_temp > 230:  # Raised threshold
-            self.system_alerts.append("Engine temperature high")
-            self.system_alerts_count += 1
+        # Temperature warnings
+        if self.engine_temp > 230:  # High temp warning
+            if "Engine temperature high" not in str(self.system_alerts[-3:]):
+                self.system_alerts.append("Engine temperature high")
+                self.system_alerts_count += 1
+        elif self.engine_temp > 240:  # Critical temp
+            if "ENGINE OVERHEATING" not in str(self.system_alerts[-3:]):
+                self.system_alerts.append("ENGINE OVERHEATING")
+                self.system_alerts_count += 1
 
         # Fuel check
         if self.fuel_remaining < 20:
-            self.system_alerts.append("Low fuel warning")
+            if "Low fuel warning" not in str(self.system_alerts[-3:]):
+                self.system_alerts.append("Low fuel warning")
 
         if self.fuel_remaining < 5:
             self.emergency_state = True
-            self.system_alerts.append("FUEL EMERGENCY")
+            if "FUEL EMERGENCY" not in str(self.system_alerts[-3:]):
+                self.system_alerts.append("FUEL EMERGENCY")
 
     def _update_weather_effects(self, dt: float):
         """Update weather effects on flight."""
@@ -440,22 +476,22 @@ class FlightSimulator:
         self.autopilot_enabled = enabled
 
     def _apply_autopilot_correction(self, dt: float):
-        """Apply autopilot corrections during update."""
+        """Apply autopilot corrections for both heading and engine management."""
         if not self.autopilot_enabled:
             return
 
-        # Autopilot gradually corrects course
+        # === HEADING CONTROL ===
         heading_error = self.target_heading - self.heading
         if heading_error > 180:
             heading_error -= 360
         elif heading_error < -180:
             heading_error += 360
 
-        # More effective autopilot correction
-        correction_rate = 2.0  # degrees per second correction rate
+        # More effective and stable autopilot correction
+        correction_rate = 1.5  # Slightly reduced for smoother control
         max_correction = correction_rate * dt
 
-        if abs(heading_error) > 0.5:  # Only correct if error is significant
+        if abs(heading_error) > 0.2:  # Even smaller threshold for smoother control
             if heading_error > 0:
                 correction = min(heading_error, max_correction)
             else:
@@ -463,6 +499,60 @@ class FlightSimulator:
 
             self.heading += correction
             self.heading = self.heading % 360
+
+        # === ENGINE TEMPERATURE MANAGEMENT VIA SPEED CONTROL ===
+        target_temp = 200  # Target operating temperature
+        temp_error = self.engine_temp - target_temp
+
+        # Calculate target speed based on current phase and temperature
+        if self.flight_phase == FlightPhase.CRUISE and self.current_flight:
+            base_speed = self.current_flight.cruise_speed
+        elif self.flight_phase == FlightPhase.CLIMB:
+            base_speed = 90
+        elif self.flight_phase == FlightPhase.DESCENT:
+            base_speed = 120
+        elif self.flight_phase == FlightPhase.APPROACH:
+            base_speed = 80
+        else:
+            base_speed = self.airspeed  # Keep current speed for other phases
+
+        # Adjust speed based on engine temperature
+        if temp_error > 20:  # Engine too hot
+            target_speed = base_speed * 0.85  # Reduce speed significantly
+            if len(self.system_alerts) == 0 or "Autopilot reducing speed" not in str(self.system_alerts[-5:]):
+                self.system_alerts.append("Autopilot reducing speed for cooling")
+        elif temp_error > 10:  # Engine warm
+            target_speed = base_speed * 0.92  # Reduce speed moderately
+        elif temp_error < -15:  # Engine too cool (rare)
+            target_speed = base_speed * 1.05  # Increase speed slightly
+        else:
+            target_speed = base_speed  # Normal speed
+
+        # Gradually adjust airspeed toward target
+        speed_error = target_speed - self.airspeed
+        speed_adjustment_rate = 10.0  # knots per second
+        max_speed_change = speed_adjustment_rate * dt
+
+        if abs(speed_error) > 1:  # Only adjust if significant error
+            if speed_error > 0:
+                speed_change = min(speed_error, max_speed_change)
+            else:
+                speed_change = max(speed_error, -max_speed_change)
+
+            # Apply speed change (but respect phase minimums)
+            new_speed = self.airspeed + speed_change
+
+            # Set reasonable speed limits based on phase
+            if self.flight_phase == FlightPhase.CRUISE:
+                new_speed = max(80, min(new_speed, self.current_flight.cruise_speed * 1.1))
+            elif self.flight_phase == FlightPhase.CLIMB:
+                new_speed = max(70, min(new_speed, 120))
+            elif self.flight_phase == FlightPhase.DESCENT:
+                new_speed = max(90, min(new_speed, 150))
+            elif self.flight_phase == FlightPhase.APPROACH:
+                new_speed = max(65, min(new_speed, 100))
+
+            self.airspeed = new_speed
 
     def _get_status(self) -> Dict:
         """Get current flight status."""
