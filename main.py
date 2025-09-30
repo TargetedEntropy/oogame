@@ -242,16 +242,8 @@ class MLEducationGame:
 
     def _create_travel_menu(self):
         """Create the travel menu for location selection."""
-        custom_theme = self.menu.get_theme().copy()
-
-        self.travel_menu = pygame_menu.Menu(
-            title='Travel to Airport',
-            width=self.width,
-            height=self.height,
-            theme=custom_theme
-        )
-
-        # Note: Menu items will be populated dynamically in _show_travel_menu()
+        # This method now does nothing - menu is created fresh each time
+        pass
 
     def _travel_to_location(self, location_id: str):
         """Travel to selected location."""
@@ -259,11 +251,10 @@ class MLEducationGame:
         if location and npc:
             # Show travel message
             self._show_message(f"Traveled to {location.name}! Met {npc.name}")
-            # Close travel menu and start conversation
-            self.travel_menu.disable()
+            # Start conversation - the travel menu will close automatically when mainloop exits
             self.show_menu = False
             self.menu.disable()
-            self._start_conversation_from_menu()
+            self.start_conversation()
         else:
             self._show_message("Travel failed - location not found")
 
@@ -339,30 +330,37 @@ class MLEducationGame:
 
     def _show_travel_menu(self):
         """Show travel menu."""
-        # Clear existing menu items
-        self.travel_menu.clear()
+        # Create a completely fresh menu each time to avoid state issues
+        custom_theme = self.menu.get_theme().copy()
+
+        travel_menu = pygame_menu.Menu(
+            title='Travel to Airport',
+            width=self.width,
+            height=self.height,
+            theme=custom_theme
+        )
 
         # Current location info
         if npc_manager.current_location:
-            self.travel_menu.add.label(
+            travel_menu.add.label(
                 f'Current: {npc_manager.current_location.name}',
                 font_size=20,
                 font_color=(180, 220, 180)
             )
             if npc_manager.current_npc:
-                self.travel_menu.add.label(
+                travel_menu.add.label(
                     f'NPC: {npc_manager.current_npc.name}',
                     font_size=16,
                     font_color=(150, 150, 200)
                 )
         else:
-            self.travel_menu.add.label(
+            travel_menu.add.label(
                 'No current location',
                 font_size=20,
                 font_color=(180, 180, 180)
             )
 
-        self.travel_menu.add.vertical_margin(20)
+        travel_menu.add.vertical_margin(20)
 
         # Add location buttons
         for location in npc_manager.locations:
@@ -371,17 +369,17 @@ class MLEducationGame:
             if npc_manager.current_location and location.id == npc_manager.current_location.id:
                 button_text = f"→ {button_text} (Current)"
 
-            self.travel_menu.add.button(
+            travel_menu.add.button(
                 button_text,
                 self._travel_to_location,
                 location.id
             )
 
-        self.travel_menu.add.vertical_margin(30)
-        self.travel_menu.add.button('Back', pygame_menu.events.BACK)
+        travel_menu.add.vertical_margin(30)
+        travel_menu.add.button('Back', pygame_menu.events.BACK)
 
-        # Show the menu
-        self.travel_menu.mainloop(self.screen)
+        # Show the fresh menu
+        travel_menu.mainloop(self.screen)
 
     def _load_npc_backstory(self) -> str:
         """Load NPC backstory from file."""
